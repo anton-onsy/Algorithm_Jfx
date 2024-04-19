@@ -1,5 +1,7 @@
 package com.example.algorithm_jfx;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Node;
 
 import java.util.ArrayList;
@@ -8,7 +10,7 @@ import java.util.ArrayList;
 
 
     public class studentTracker extends Node {
-
+/*
         //private final ArrayList<Integer> grades;
         String Name;
         Integer Stdgrade;
@@ -25,7 +27,38 @@ import java.util.ArrayList;
         public  Integer getGrade() {
             return Stdgrade;
         }
+*/
+private SimpleStringProperty name;
+        private SimpleIntegerProperty grade;
 
+        public studentTracker(String name, int grade) {
+            this.name = new SimpleStringProperty(name);
+            this.grade = new SimpleIntegerProperty(grade);
+        }
+
+        public String getName() {
+            return name.get();
+        }
+
+        public void setName(String name) {
+            this.name.set(name);
+        }
+
+        public int getGrade() {
+            return grade.get();
+        }
+
+        public void setGrade(int grade) {
+            this.grade.set(grade);
+        }
+
+        public SimpleStringProperty nameProperty() {
+            return name;
+        }
+
+        public SimpleIntegerProperty gradeProperty() {
+            return grade;
+        }
         ///////////////////studentName sorting Algorithm\\\\\\\\\\\\\\\\\\\\\\\
         //////////////////// selection sort\\\\\\\\\\\\\\\\\\\\
         public static void selectionSortStd(ArrayList<studentTracker> students) {
