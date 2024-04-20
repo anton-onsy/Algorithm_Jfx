@@ -13,9 +13,9 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -33,7 +33,6 @@ public class StudentGradeTrackerProject extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    /**/
 
     @Override
     public void start(Stage primaryStage) {
@@ -47,45 +46,7 @@ public class StudentGradeTrackerProject extends Application {
 
         Collections.shuffle(students);
 
-        Button sortButton = new Button("Sort");
-        Button shuffleButton = new Button("Shuffle");
-        sortingAlgorithmComboBox = new ComboBox<>(sortingName);
-        sortingAlgorithmComboBox.setPromptText("Select sorting algorithm");
-
-        sortButton.setOnAction(event -> {
-            String selectedItem = sortingAlgorithmComboBox.getValue();
-            if (selectedItem != null) {
-                if (selectedItem.equals("selection")) {
-                    animateSelectionSort();
-                } else if (selectedItem.equals("bubble")) {
-                    animateBubbleSort();
-                }
-            } else {
-                System.out.println("No sorting algorithm selected.");
-            }
-        });
-
-        shuffleButton.setOnAction(event -> {
-            Collections.shuffle(students);
-            updateGridView(primaryStage);
-        });
-
-        HBox controlButtons = new HBox(sortingAlgorithmComboBox, sortButton, shuffleButton);
-        controlButtons.setAlignment(Pos.CENTER);
-        controlButtons.setSpacing(20);
-
-        VBox v1 = new VBox(controlButtons);
-        v1.setAlignment(Pos.CENTER);
-        v1.setSpacing(20);
-
-        Scene scene = new Scene(v1, 500, 400);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-        updateGridView(primaryStage);
-    }
-
-    private void updateGridView(Stage primaryStage) {
+        // Create grid for student data
         GridPane gridPane = new GridPane();
         gridPane.setPadding(new Insets(10));
         gridPane.setHgap(20);
@@ -98,23 +59,60 @@ public class StudentGradeTrackerProject extends Application {
         gridPane.add(nameLabel, 0, 0);
         gridPane.add(gradeLabel, 1, 0);
 
+        // Populate grid with student data
         for (int i = 0; i < students.size(); i++) {
             Label studentNameLabel = new Label(students.get(i).getName());
             Label gradeLabelValue = new Label(Integer.toString(students.get(i).getGrade()));
-            HBox hbox = new HBox(20);
-            hbox.getChildren().addAll(studentNameLabel, gradeLabelValue);
-            if (i % 2 == 0) {
-                hbox.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));
-            } else {
-                hbox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
-            }
-            gridPane.add(hbox, 0, i + 1, 8, 1);
+            GridPane.setConstraints(studentNameLabel, 0, i + 1);
+            GridPane.setConstraints(gradeLabelValue, 1, i + 1);
+            gridPane.getChildren().addAll(studentNameLabel, gradeLabelValue);
         }
 
-        primaryStage.setScene(new Scene(gridPane, 320, 200));
+        // Create buttons and combo box
+        Button sortButton = new Button("Sort");
+        Button shuffleButton = new Button("Shuffle");
+        sortingAlgorithmComboBox = new ComboBox<>(sortingName);
+        sortingAlgorithmComboBox.setPromptText("Select sorting algorithm");
+
+        sortButton.setOnAction(event -> {
+            String selectedItem = sortingAlgorithmComboBox.getValue();
+            if (selectedItem != null) {
+                if (selectedItem.equals("selection")) {
+                    animateSelectionSort(gridPane);
+                } else if (selectedItem.equals("bubble")) {
+                    animateBubbleSort(gridPane);
+                }
+            } else {
+                System.out.println("No sorting algorithm selected.");
+            }
+        });
+
+        shuffleButton.setOnAction(event -> {
+            Collections.shuffle(students);
+            updateGridView(gridPane);
+        });
+
+        // Layout configuration for buttons and combo box
+        HBox controlButtons = new HBox(sortingAlgorithmComboBox, sortButton, shuffleButton);
+        controlButtons.setAlignment(Pos.CENTER);
+        controlButtons.setSpacing(20);
+
+        // Create bottom layout for buttons
+        BorderPane bottomLayout = new BorderPane();
+        bottomLayout.setCenter(controlButtons);
+        bottomLayout.setPadding(new Insets(10));
+
+        // Create main BorderPane to hold grid and buttons
+        BorderPane root = new BorderPane();
+        root.setCenter(gridPane);
+        root.setBottom(bottomLayout);
+
+        Scene scene = new Scene(root, 500, 400);
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
-    private void animateBubbleSort() {
+    private void animateBubbleSort(GridPane gridPane) {
         Timeline timeline = new Timeline();
         boolean swapped;
         do {
@@ -122,7 +120,7 @@ public class StudentGradeTrackerProject extends Application {
             for (int i = 0; i < students.size() - 1; i++) {
                 if (students.get(i).getGrade() > students.get(i + 1).getGrade()) {
                     Collections.swap(students, i, i + 1);
-                    updateGridView((Stage) sortingAlgorithmComboBox.getScene().getWindow());
+                    updateGridView(gridPane);
                     swapped = true;
                 }
             }
@@ -130,7 +128,7 @@ public class StudentGradeTrackerProject extends Application {
         timeline.play();
     }
 
-    private void animateSelectionSort() {
+    private void animateSelectionSort(GridPane gridPane) {
         Timeline timeline = new Timeline();
         for (int i = 0; i < students.size() - 1; i++) {
             final int minIndex = i;
@@ -145,10 +143,42 @@ public class StudentGradeTrackerProject extends Application {
                 }
                 if (swapIndex != minIndex) {
                     Collections.swap(students, minIndex, swapIndex);
-                    updateGridView((Stage) sortingAlgorithmComboBox.getScene().getWindow());
+                    updateGridView(gridPane);
                 }
             }));
         }
         timeline.play();
     }
+
+    private void updateGridView(GridPane gridPane) {
+        // Clear existing content
+        gridPane.getChildren().clear();
+
+        // Recreate labels and populate grid with updated data
+        Label nameLabel = new Label("Student Name");
+        Label gradeLabel = new Label("Grade");
+        nameLabel.setStyle("-fx-font-weight: bold;");
+        gradeLabel.setStyle("-fx-font-weight: bold;");
+        gridPane.add(nameLabel, 0, 0);
+        gridPane.add(gradeLabel, 1, 0);
+
+        // Populate grid with student data
+        for (int i = 0; i < students.size(); i++) {
+            Label studentNameLabel = new Label(students.get(i).getName());
+            Label gradeLabelValue = new Label(Integer.toString(students.get(i).getGrade()));
+            GridPane.setConstraints(studentNameLabel, 0, i + 1);
+            GridPane.setConstraints(gradeLabelValue, 1, i + 1);
+            gridPane.getChildren().addAll(studentNameLabel, gradeLabelValue);
+
+            // Set background color based on row number
+            if (i % 2 == 0) {
+                studentNameLabel.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));
+                gradeLabelValue.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));
+            } else {
+                studentNameLabel.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+                gradeLabelValue.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+            }
+        }
+    }
+
 }
