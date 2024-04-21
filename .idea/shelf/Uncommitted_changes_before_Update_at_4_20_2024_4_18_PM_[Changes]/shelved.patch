@@ -1,0 +1,111 @@
+Index: src/main/java/com/example/algorithm_jfx/AnimationRows.java
+===================================================================
+diff --git a/src/main/java/com/example/algorithm_jfx/AnimationRows.java b/src/main/java/com/example/algorithm_jfx/AnimationRows.java
+deleted file mode 100644
+--- a/src/main/java/com/example/algorithm_jfx/AnimationRows.java	(revision dd6ba1a021a4479bd3aa2072872a0dee2bde5011)
++++ /dev/null	(revision dd6ba1a021a4479bd3aa2072872a0dee2bde5011)
+@@ -1,38 +0,0 @@
+-package com.example.algorithm_jfx;
+-
+-import javafx.animation.TranslateTransition;
+-import javafx.scene.control.TableCell;
+-import javafx.util.Duration;
+-
+-public class AnimationRows<T> extends TableCell<T, Object> {
+-
+-
+-
+-        private TranslateTransition translateTransition;
+-
+-        public AnimationRows() {
+-            this.translateTransition = new TranslateTransition(Duration.seconds(1), this);
+-            this.translateTransition.setFromX(0);
+-            this.translateTransition.setToX(0);
+-        }
+-
+-        @Override
+-        protected void updateItem(Object item, boolean empty) {
+-            super.updateItem(item, empty);
+-            if (empty || item == null) {
+-                setText(null);
+-                setGraphic(null);
+-            } else {
+-                setText(item.toString());
+-                animate();
+-            }
+-        }
+-
+-        private void animate() {
+-            translateTransition.stop();
+-            translateTransition.setFromX(-10);
+-            translateTransition.setToX(0);
+-            translateTransition.play();
+-        }
+-    }
+-
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"44467efd-aa85-4cd1-86d0-790f797d3aff\" name=\"Changes\" comment=\"first visualization\">\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/AnimationRows.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/animatedStudentGradeTracker.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/studentGrades.java\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/studentTracker.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/studentTracker.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"2emlBL7pLMOVOPrGbRhxaHbpkeT\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/User/Desktop/intellij projects/Algorithm_Jfx&quot;\r\n  }\r\n}</component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"44467efd-aa85-4cd1-86d0-790f797d3aff\" name=\"Changes\" comment=\"\" />\r\n      <created>1712517499532</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1712517499532</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"first visualization\">\r\n      <created>1713122013284</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1713122013284</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"2\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"first visualization\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"first visualization\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision dd6ba1a021a4479bd3aa2072872a0dee2bde5011)
++++ b/.idea/workspace.xml	(date 1713292965951)
+@@ -4,12 +4,9 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="44467efd-aa85-4cd1-86d0-790f797d3aff" name="Changes" comment="first visualization">
+-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/AnimationRows.java" afterDir="false" />
++    <list default="true" id="44467efd-aa85-4cd1-86d0-790f797d3aff" name="Changes" comment="modify visualization --second commit">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/animatedStudentGradeTracker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/studentGrades.java" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/studentTracker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/studentTracker.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/AnimationRows.java" beforeDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -35,8 +32,8 @@
+   <component name="PropertiesComponent">{
+   &quot;keyToString&quot;: {
+     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;C:/Users/User/Desktop/intellij projects/Algorithm_Jfx&quot;
++    &quot;last_opened_file_path&quot;: &quot;C:/Users/User/Desktop/intellij projects/Algorithm_Jfx&quot;,
++    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+   }
+ }</component>
+   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+@@ -55,11 +52,26 @@
+       <option name="project" value="LOCAL" />
+       <updated>1713122013284</updated>
+     </task>
+-    <option name="localTasksCounter" value="2" />
++    <task id="LOCAL-00002" summary="modify visualization --second commit">
++      <created>1713202575759</created>
++      <option name="number" value="00002" />
++      <option name="presentableId" value="LOCAL-00002" />
++      <option name="project" value="LOCAL" />
++      <updated>1713202575759</updated>
++    </task>
++    <task id="LOCAL-00003" summary="modify visualization --second commit">
++      <created>1713202585925</created>
++      <option name="number" value="00003" />
++      <option name="presentableId" value="LOCAL-00003" />
++      <option name="project" value="LOCAL" />
++      <updated>1713202585925</updated>
++    </task>
++    <option name="localTasksCounter" value="4" />
+     <servers />
+   </component>
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="first visualization" />
+-    <option name="LAST_COMMIT_MESSAGE" value="first visualization" />
++    <MESSAGE value="modify visualization --second commit" />
++    <option name="LAST_COMMIT_MESSAGE" value="modify visualization --second commit" />
+   </component>
+ </project>
+\ No newline at end of file
