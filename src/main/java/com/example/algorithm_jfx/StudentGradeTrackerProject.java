@@ -35,13 +35,6 @@ public class StudentGradeTrackerProject extends Application {
         sortingName = FXCollections.observableArrayList("selection", "bubble");
         students = new ArrayList<>();
 
-        Random random = new Random();
-        for (int i = 0; i < 10; i++) {
-            students.add(new studentTracker("Student" + i, random.nextInt(100)));
-        }
-
-        Collections.shuffle(students);
-
         // Create grid for student data
         GridPane gridPane = new GridPane();
         gridPane.setPadding(new Insets(10));
@@ -52,15 +45,14 @@ public class StudentGradeTrackerProject extends Application {
         Label gradeLabel = new Label("Grade");
         HBox h1=new HBox();
         h1.getChildren().addAll(nameLabel,gradeLabel);
-
-
         nameLabel.setStyle("-fx-font-weight: bold;");
         gradeLabel.setStyle("-fx-font-weight: bold;");
         h1.setSpacing(50);
         gridPane.getChildren().addAll(h1);
 
-        // Populate grid with student data
-        for (int i = 0; i < students.size(); i++) {
+        Random random = new Random();
+        for (int i = 0; i < 10; i++) {
+            students.add(new studentTracker("Student" + i, random.nextInt(100)));
             Label studentNameLabel = new Label(students.get(i).getName());
             Label gradeLabelValue = new Label(Integer.toString(students.get(i).getGrade()));
             HBox hBox= new HBox();
@@ -73,6 +65,8 @@ public class StudentGradeTrackerProject extends Application {
                 hBox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
             }
         }
+
+        Collections.shuffle(students);
 
         // Create buttons and combo box
         Button sortButton = new Button("Sort");
