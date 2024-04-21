@@ -11,11 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -54,18 +50,28 @@ public class StudentGradeTrackerProject extends Application {
 
         Label nameLabel = new Label("Student Name");
         Label gradeLabel = new Label("Grade");
+        HBox h1=new HBox();
+        h1.getChildren().addAll(nameLabel,gradeLabel);
+
+
         nameLabel.setStyle("-fx-font-weight: bold;");
         gradeLabel.setStyle("-fx-font-weight: bold;");
-        gridPane.add(nameLabel, 0, 0);
-        gridPane.add(gradeLabel, 1, 0);
+        h1.setSpacing(50);
+        gridPane.getChildren().addAll(h1);
 
         // Populate grid with student data
         for (int i = 0; i < students.size(); i++) {
             Label studentNameLabel = new Label(students.get(i).getName());
             Label gradeLabelValue = new Label(Integer.toString(students.get(i).getGrade()));
-            GridPane.setConstraints(studentNameLabel, 0, i + 1);
-            GridPane.setConstraints(gradeLabelValue, 1, i + 1);
-            gridPane.getChildren().addAll(studentNameLabel, gradeLabelValue);
+            HBox hBox= new HBox();
+            hBox.getChildren().addAll(studentNameLabel, gradeLabelValue);
+            hBox.setSpacing(85);
+            gridPane.add(hBox, 0, i+1);
+            if (i % 2 == 0) {
+                hBox.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));
+            } else {
+                hBox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+            }
         }
 
         // Create buttons and combo box
@@ -157,26 +163,30 @@ public class StudentGradeTrackerProject extends Application {
         // Recreate labels and populate grid with updated data
         Label nameLabel = new Label("Student Name");
         Label gradeLabel = new Label("Grade");
+        HBox h1=new HBox();
+        h1.getChildren().addAll(nameLabel,gradeLabel);
+
         nameLabel.setStyle("-fx-font-weight: bold;");
         gradeLabel.setStyle("-fx-font-weight: bold;");
-        gridPane.add(nameLabel, 0, 0);
-        gridPane.add(gradeLabel, 1, 0);
+        h1.setSpacing(50);
+        gridPane.getChildren().addAll(h1);
 
         // Populate grid with student data
         for (int i = 0; i < students.size(); i++) {
             Label studentNameLabel = new Label(students.get(i).getName());
             Label gradeLabelValue = new Label(Integer.toString(students.get(i).getGrade()));
-            GridPane.setConstraints(studentNameLabel, 0, i + 1);
-            GridPane.setConstraints(gradeLabelValue, 1, i + 1);
-            gridPane.getChildren().addAll(studentNameLabel, gradeLabelValue);
+            HBox hBox= new HBox();
+            hBox.getChildren().addAll(studentNameLabel, gradeLabelValue);
+            hBox.setSpacing(85);
+            gridPane.add(hBox, 0, i+1);
 
             // Set background color based on row number
             if (i % 2 == 0) {
-                studentNameLabel.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));
-                gradeLabelValue.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));
+                hBox.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));
+                //gradeLabelValue.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));
             } else {
-                studentNameLabel.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
-                gradeLabelValue.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+                hBox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+                //gradeLabelValue.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
             }
         }
     }
