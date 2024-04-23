@@ -1,0 +1,226 @@
+Index: src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.algorithm_jfx;\r\n\r\nimport javafx.animation.KeyFrame;\r\nimport javafx.animation.Timeline;\r\nimport javafx.application.Application;\r\nimport javafx.collections.FXCollections;\r\nimport javafx.collections.ObservableList;\r\nimport javafx.geometry.Insets;\r\nimport javafx.geometry.Pos;\r\nimport javafx.scene.Scene;\r\nimport javafx.scene.control.Button;\r\nimport javafx.scene.control.ComboBox;\r\nimport javafx.scene.control.Label;\r\nimport javafx.scene.layout.*;\r\nimport javafx.scene.paint.Color;\r\nimport javafx.stage.Stage;\r\nimport javafx.util.Duration;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.Collections;\r\nimport java.util.Random;\r\n\r\npublic class StudentGradeTrackerProject extends Application {\r\n\r\n    ArrayList<studentTracker> students;\r\n    ObservableList<String> sortingName;\r\n    ComboBox<String> sortingAlgorithmComboBox;\r\n\r\n    public static void main(String[] args) {\r\n        launch(args);\r\n    }\r\n\r\n    @Override\r\n    public void start(Stage primaryStage) {\r\n        sortingName = FXCollections.observableArrayList(\"selection\", \"bubble\");\r\n        students = new ArrayList<>();\r\n\r\n        Random random = new Random();\r\n        for (int i = 0; i < 10; i++) {\r\n            students.add(new studentTracker(\"Student\" + i, random.nextInt(100)));\r\n        }\r\n\r\n        Collections.shuffle(students);\r\n\r\n        // Create grid for student data\r\n        GridPane gridPane = new GridPane();\r\n        gridPane.setPadding(new Insets(10));\r\n        gridPane.setHgap(20);\r\n        gridPane.setVgap(10);\r\n\r\n        Label nameLabel = new Label(\"Student Name\");\r\n        Label gradeLabel = new Label(\"Grade\");\r\n        HBox h1=new HBox();\r\n        h1.getChildren().addAll(nameLabel,gradeLabel);\r\n\r\n\r\n        nameLabel.setStyle(\"-fx-font-weight: bold;\");\r\n        gradeLabel.setStyle(\"-fx-font-weight: bold;\");\r\n        h1.setSpacing(50);\r\n        gridPane.getChildren().addAll(h1);\r\n\r\n        // Populate grid with student data\r\n        for (int i = 0; i < students.size(); i++) {\r\n            Label studentNameLabel = new Label(students.get(i).getName());\r\n            Label gradeLabelValue = new Label(Integer.toString(students.get(i).getGrade()));\r\n            HBox hBox= new HBox();\r\n            hBox.getChildren().addAll(studentNameLabel, gradeLabelValue);\r\n            hBox.setSpacing(85);\r\n            gridPane.add(hBox, 0, i+1);\r\n            if (i % 2 == 0) {\r\n                hBox.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));\r\n            } else {\r\n                hBox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));\r\n            }\r\n        }\r\n\r\n        // Create buttons and combo box\r\n        Button sortButton = new Button(\"Sort\");\r\n        Button shuffleButton = new Button(\"Shuffle\");\r\n        sortingAlgorithmComboBox = new ComboBox<>(sortingName);\r\n        sortingAlgorithmComboBox.setPromptText(\"Select sorting algorithm\");\r\n\r\n        sortButton.setOnAction(event -> {\r\n            String selectedItem = sortingAlgorithmComboBox.getValue();\r\n            if (selectedItem != null) {\r\n                if (selectedItem.equals(\"selection\")) {\r\n                    animateSelectionSort(gridPane);\r\n                } else if (selectedItem.equals(\"bubble\")) {\r\n                    animateBubbleSort(gridPane);\r\n                }\r\n            } else {\r\n                System.out.println(\"No sorting algorithm selected.\");\r\n            }\r\n        });\r\n\r\n        shuffleButton.setOnAction(event -> {\r\n            Collections.shuffle(students);\r\n            updateGridView(gridPane);\r\n        });\r\n\r\n        // Layout configuration for buttons and combo box\r\n        HBox controlButtons = new HBox(sortingAlgorithmComboBox, sortButton, shuffleButton);\r\n        controlButtons.setAlignment(Pos.CENTER);\r\n        controlButtons.setSpacing(20);\r\n\r\n        // Create bottom layout for buttons\r\n        BorderPane bottomLayout = new BorderPane();\r\n        bottomLayout.setCenter(controlButtons);\r\n        bottomLayout.setPadding(new Insets(10));\r\n\r\n        // Create main BorderPane to hold grid and buttons\r\n        BorderPane root = new BorderPane();\r\n        root.setCenter(gridPane);\r\n        root.setBottom(bottomLayout);\r\n\r\n        Scene scene = new Scene(root, 500, 400);\r\n        primaryStage.setScene(scene);\r\n        primaryStage.show();\r\n    }\r\n\r\n    private void animateBubbleSort(GridPane gridPane) {\r\n        Timeline timeline = new Timeline();\r\n        boolean swapped;\r\n        do {\r\n            swapped = false;\r\n            for (int i = 0; i < students.size() - 1; i++) {\r\n                if (students.get(i).getGrade() > students.get(i + 1).getGrade()) {\r\n                    Collections.swap(students, i, i + 1);\r\n                    updateGridView(gridPane);\r\n                    swapped = true;\r\n                }\r\n            }\r\n        } while (swapped);\r\n        timeline.play();\r\n    }\r\n\r\n    private void animateSelectionSort(GridPane gridPane) {\r\n        Timeline timeline = new Timeline();\r\n        for (int i = 0; i < students.size() - 1; i++) {\r\n            final int minIndex = i;\r\n            timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), event -> {\r\n                int minAge = students.get(minIndex).getGrade();\r\n                int swapIndex = minIndex;\r\n                for (int j = minIndex + 1; j < students.size(); j++) {\r\n                    if (students.get(j).getGrade() < minAge) {\r\n                        minAge = students.get(j).getGrade();\r\n                        swapIndex = j;\r\n                    }\r\n                }\r\n                if (swapIndex != minIndex) {\r\n                    Collections.swap(students, minIndex, swapIndex);\r\n                    updateGridView(gridPane);\r\n                }\r\n            }));\r\n        }\r\n        timeline.play();\r\n    }\r\n\r\n    private void updateGridView(GridPane gridPane) {\r\n        // Clear existing content\r\n        gridPane.getChildren().clear();\r\n\r\n        // Recreate labels and populate grid with updated data\r\n        Label nameLabel = new Label(\"Student Name\");\r\n        Label gradeLabel = new Label(\"Grade\");\r\n        HBox h1=new HBox();\r\n        h1.getChildren().addAll(nameLabel,gradeLabel);\r\n\r\n        nameLabel.setStyle(\"-fx-font-weight: bold;\");\r\n        gradeLabel.setStyle(\"-fx-font-weight: bold;\");\r\n        h1.setSpacing(50);\r\n        gridPane.getChildren().addAll(h1);\r\n\r\n        // Populate grid with student data\r\n        for (int i = 0; i < students.size(); i++) {\r\n            Label studentNameLabel = new Label(students.get(i).getName());\r\n            Label gradeLabelValue = new Label(Integer.toString(students.get(i).getGrade()));\r\n            HBox hBox= new HBox();\r\n            hBox.getChildren().addAll(studentNameLabel, gradeLabelValue);\r\n            hBox.setSpacing(85);\r\n            gridPane.add(hBox, 0, i+1);\r\n\r\n            // Set background color based on row number\r\n            if (i % 2 == 0) {\r\n                hBox.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));\r\n                //gradeLabelValue.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));\r\n            } else {\r\n                hBox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));\r\n                //gradeLabelValue.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));\r\n            }\r\n        }\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java b/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java
+--- a/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java	(revision e510aa0c21667ca8d42b0d63439d1913a7a44a7b)
++++ b/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java	(date 1713702977774)
+@@ -23,6 +23,7 @@
+ public class StudentGradeTrackerProject extends Application {
+ 
+     ArrayList<studentTracker> students;
++    ArrayList<HBox> hBoxes ;
+     ObservableList<String> sortingName;
+     ComboBox<String> sortingAlgorithmComboBox;
+ 
+@@ -66,6 +67,7 @@
+             HBox hBox= new HBox();
+             hBox.getChildren().addAll(studentNameLabel, gradeLabelValue);
+             hBox.setSpacing(85);
++            hBoxes.add(hBox);
+             gridPane.add(hBox, 0, i+1);
+             if (i % 2 == 0) {
+                 hBox.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));
+@@ -84,9 +86,9 @@
+             String selectedItem = sortingAlgorithmComboBox.getValue();
+             if (selectedItem != null) {
+                 if (selectedItem.equals("selection")) {
+-                    animateSelectionSort(gridPane);
++                    animateSelectionSort(students);
+                 } else if (selectedItem.equals("bubble")) {
+-                    animateBubbleSort(gridPane);
++                    animateBubbleSort(students);
+                 }
+             } else {
+                 System.out.println("No sorting algorithm selected.");
+@@ -94,8 +96,9 @@
+         });
+ 
+         shuffleButton.setOnAction(event -> {
++
+             Collections.shuffle(students);
+-            updateGridView(gridPane);
++            //updateGridView(gridPane);
+         });
+ 
+         // Layout configuration for buttons and combo box
+@@ -118,7 +121,7 @@
+         primaryStage.show();
+     }
+ 
+-    private void animateBubbleSort(GridPane gridPane) {
++    private void animateBubbleSort(ArrayList<studentTracker> students) {
+         Timeline timeline = new Timeline();
+         boolean swapped;
+         do {
+@@ -126,7 +129,7 @@
+             for (int i = 0; i < students.size() - 1; i++) {
+                 if (students.get(i).getGrade() > students.get(i + 1).getGrade()) {
+                     Collections.swap(students, i, i + 1);
+-                    updateGridView(gridPane);
++
+                     swapped = true;
+                 }
+             }
+@@ -134,7 +137,7 @@
+         timeline.play();
+     }
+ 
+-    private void animateSelectionSort(GridPane gridPane) {
++    private void animateSelectionSort(ArrayList<studentTracker> students) {
+         Timeline timeline = new Timeline();
+         for (int i = 0; i < students.size() - 1; i++) {
+             final int minIndex = i;
+@@ -149,46 +152,12 @@
+                 }
+                 if (swapIndex != minIndex) {
+                     Collections.swap(students, minIndex, swapIndex);
+-                    updateGridView(gridPane);
++                    //updateGridView(gridPane);
+                 }
+             }));
+         }
+         timeline.play();
+     }
+ 
+-    private void updateGridView(GridPane gridPane) {
+-        // Clear existing content
+-        gridPane.getChildren().clear();
+-
+-        // Recreate labels and populate grid with updated data
+-        Label nameLabel = new Label("Student Name");
+-        Label gradeLabel = new Label("Grade");
+-        HBox h1=new HBox();
+-        h1.getChildren().addAll(nameLabel,gradeLabel);
+-
+-        nameLabel.setStyle("-fx-font-weight: bold;");
+-        gradeLabel.setStyle("-fx-font-weight: bold;");
+-        h1.setSpacing(50);
+-        gridPane.getChildren().addAll(h1);
+-
+-        // Populate grid with student data
+-        for (int i = 0; i < students.size(); i++) {
+-            Label studentNameLabel = new Label(students.get(i).getName());
+-            Label gradeLabelValue = new Label(Integer.toString(students.get(i).getGrade()));
+-            HBox hBox= new HBox();
+-            hBox.getChildren().addAll(studentNameLabel, gradeLabelValue);
+-            hBox.setSpacing(85);
+-            gridPane.add(hBox, 0, i+1);
+-
+-            // Set background color based on row number
+-            if (i % 2 == 0) {
+-                hBox.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));
+-                //gradeLabelValue.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));
+-            } else {
+-                hBox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+-                //gradeLabelValue.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+-            }
+-        }
+-    }
+ 
+ }
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"44467efd-aa85-4cd1-86d0-790f797d3aff\" name=\"Changes\" comment=\"first visualization\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/misc.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/misc.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/AnimationRows.java\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\">{\r\n  &quot;lastFilter&quot;: {\r\n    &quot;state&quot;: &quot;OPEN&quot;,\r\n    &quot;assignee&quot;: &quot;maryam22001&quot;\r\n  }\r\n}</component>\r\n  <component name=\"GithubPullRequestsUISettings\">\r\n    <option name=\"selectedUrlAndAccountId\">\r\n      <UrlAndAccount>\r\n        <option name=\"accountId\" value=\"db847dad-5a20-4338-9d14-a04d79841591\" />\r\n        <option name=\"url\" value=\"https://github.com/anton-onsy/Algorithm_Jfx.git\" />\r\n      </UrlAndAccount>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProblemsViewState\">\r\n    <option name=\"selectedTabId\" value=\"CurrentFile\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 1\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2emlBL7pLMOVOPrGbRhxaHbpkeT\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\r\n    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;master&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/20109/IdeaProjects/Algorithm_Jfx&quot;,\r\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,\r\n    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,\r\n    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,\r\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\r\n  }\r\n}</component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"44467efd-aa85-4cd1-86d0-790f797d3aff\" name=\"Changes\" comment=\"\" />\r\n      <created>1712517499532</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1712517499532</updated>\r\n      <workItem from=\"1713485617503\" duration=\"8423000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"first visualization\">\r\n      <created>1713122013284</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1713122013284</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"first visualization\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1713505137751</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1713505137753</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"3\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"first visualization\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"first visualization\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision e510aa0c21667ca8d42b0d63439d1913a7a44a7b)
++++ b/.idea/workspace.xml	(date 1713701438222)
+@@ -4,10 +4,8 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="44467efd-aa85-4cd1-86d0-790f797d3aff" name="Changes" comment="first visualization">
+-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
++    <list default="true" id="44467efd-aa85-4cd1-86d0-790f797d3aff" name="Changes" comment="put labels in hboxs for animation">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/AnimationRows.java" beforeDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+@@ -51,24 +49,25 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;C:/Users/20109/IdeaProjects/Algorithm_Jfx&quot;,
+-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "RunOnceActivity.OpenProjectViewOnStart": "true",
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
++    "WebServerToolWindowFactoryState": "false",
++    "git-widget-placeholder": "master",
++    "last_opened_file_path": "C:/Users/20109/IdeaProjects/Algorithm_Jfx",
++    "node.js.detected.package.eslint": "true",
++    "node.js.detected.package.tslint": "true",
++    "node.js.selected.package.eslint": "(autodetect)",
++    "node.js.selected.package.tslint": "(autodetect)",
++    "project.structure.last.edited": "Project",
++    "project.structure.proportion": "0.15",
++    "project.structure.side.proportion": "0.0",
++    "settings.editor.selected.configurable": "com.github.copilot.settings.ApplicationConfigurable",
++    "vue.rearranger.settings.migration": "true"
+   }
+-}</component>
++}]]></component>
+   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+   <component name="TaskManager">
+     <task active="true" id="Default" summary="Default task">
+@@ -94,7 +93,21 @@
+       <option name="project" value="LOCAL" />
+       <updated>1713505137753</updated>
+     </task>
+-    <option name="localTasksCounter" value="3" />
++    <task id="LOCAL-00003" summary="put labels in hboxs for animation">
++      <created>1713700424388</created>
++      <option name="number" value="00003" />
++      <option name="presentableId" value="LOCAL-00003" />
++      <option name="project" value="LOCAL" />
++      <updated>1713700424388</updated>
++    </task>
++    <task id="LOCAL-00004" summary="put labels in hboxs for animation">
++      <created>1713700439416</created>
++      <option name="number" value="00004" />
++      <option name="presentableId" value="LOCAL-00004" />
++      <option name="project" value="LOCAL" />
++      <updated>1713700439416</updated>
++    </task>
++    <option name="localTasksCounter" value="5" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -113,6 +126,11 @@
+   </component>
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="first visualization" />
+-    <option name="LAST_COMMIT_MESSAGE" value="first visualization" />
++    <MESSAGE value="put labels in hboxs for animation" />
++    <option name="LAST_COMMIT_MESSAGE" value="put labels in hboxs for animation" />
++  </component>
++  <component name="XSLT-Support.FileAssociations.UIState">
++    <expand />
++    <select />
+   </component>
+ </project>
+\ No newline at end of file
