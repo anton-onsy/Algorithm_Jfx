@@ -25,6 +25,8 @@ public class AnimationTest extends Application {
     private Student[] students;
     private HBox hbox;
     private int step;
+    private int visualizationStep = 0;
+    int counter;
     private boolean sortingActive;
 
     public static void main(String[] args) {
@@ -47,11 +49,11 @@ public class AnimationTest extends Application {
         root.setCenter(hbox);
 
         Button selectionSortButton = new Button("Selection Sort");
-        Button selectionSortOneStepButton = new Button("Selection Sort One Step");
+        Button selectionSortVisualizationButton = new Button("Selection Sort Visualization");
         Button bubbleSortButton = new Button("Bubble Sort");
         Button shuffleButton = new Button("Shuffle");
 
-        HBox bottomBox = new HBox(10, selectionSortButton, selectionSortOneStepButton, bubbleSortButton, shuffleButton);
+        HBox bottomBox = new HBox(10, selectionSortButton, selectionSortVisualizationButton, bubbleSortButton, shuffleButton);
         bottomBox.setAlignment(Pos.CENTER);
         bottomBox.setPadding(new Insets(10));
 
@@ -67,7 +69,7 @@ public class AnimationTest extends Application {
             startSorting("Selection Sort");
         });
 
-        selectionSortOneStepButton.setOnAction(e -> {
+        selectionSortVisualizationButton.setOnAction(e -> {
             selectionSortStepVisualization();
         });
 
@@ -98,7 +100,30 @@ public class AnimationTest extends Application {
         }
     }
 
-    private void drawStudentsComparing() {}
+    private void drawStudentsComparing(int firstInd, int secondInd) {
+        hbox.getChildren().clear();
+        for (int i = 0; i < ARRAY_SIZE; i++) {
+            Student student = students[i];
+
+            Rectangle rectangle = null;
+            //Coloring
+            if(i != firstInd & i != secondInd){
+                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.LIGHTGREY);
+            } else if (i == firstInd) {
+                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.RED);
+            }else if(i == secondInd){
+                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.BLUE);
+            }
+
+
+
+            Text text = new Text(student.getName() + " (" + student.getGrade() + ")");
+            text.setFill(Color.BLACK);
+            StackPane stackPane = new StackPane(rectangle, text);
+            stackPane.setAlignment(Pos.BOTTOM_CENTER);
+            hbox.getChildren().add(stackPane);
+        }
+    }
 
     private void drawStudentsComparingJustBeforeSwapping(int firstInd, int secondInd) {
         hbox.getChildren().clear();
@@ -107,12 +132,10 @@ public class AnimationTest extends Application {
 
             Rectangle rectangle;
             //Coloring
-            if(i!=firstInd & i != secondInd){
+            if(i != firstInd & i != secondInd){
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.LIGHTGREY);
-            } else if (i == firstInd) {
+            } else {
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.RED);
-            }else {
-                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.BLUE);
             }
 
 
@@ -133,7 +156,7 @@ public class AnimationTest extends Application {
 
             Rectangle rectangle;
             //Coloring
-            if(i!=firstInd & i != secondInd){
+            if(i != firstInd & i != secondInd){
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.LIGHTGREY);
             } else {
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.GREEN);
@@ -152,7 +175,7 @@ public class AnimationTest extends Application {
 
     private void startSorting(String sortingType) {
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1), e -> {
+                new KeyFrame(Duration.seconds(0.5), e -> {
                     if (sortingActive && step < ARRAY_SIZE) {
                         if (sortingType.equals("Selection Sort")) {
                             selectionSortStep();
@@ -160,7 +183,9 @@ public class AnimationTest extends Application {
                             bubbleSortStep();
                         }
                         drawStudents();
+                        System.out.println(step);
                         step++;
+
                     }
                 })
         );
@@ -193,33 +218,52 @@ public class AnimationTest extends Application {
     }
 
     private void selectionSortStepVisualization() {
+        counter = visualizationStep+1;
+        final int[] minIndex = {visualizationStep};
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(1), e -> {
 
-        KeyFrame Compare = new KeyFrame(Duration.seconds(2), e -> {
-            drawStudentsComparingJustBeforeSwapping(0,5);
+                    if(counter<ARRAY_SIZE){
+                        drawStudentsComparing(visualizationStep, counter);
+                        if (students[counter].getGrade() < students[minIndex[0]].getGrade()) {
+                            minIndex[0] = counter;
+                        }
+                    }
 
-        });
+                    System.out.println("before adding "+counter);
+                    counter++;
+                    System.out.println("after adding "+counter);
 
-        KeyFrame Swap = new KeyFrame(Duration.seconds(2), e -> {
-            int minIndex = step;
-            for (int i = step + 1; i < ARRAY_SIZE; i++) {
-                if (students[i].getGrade() < students[minIndex].getGrade()) {
-                    minIndex = i;
-                }
-            }
-            drawStudentsComparingJustBeforeSwapping(0,minIndex);
-            // Swap
-            Student temp = students[minIndex];
-            students[minIndex] = students[step];
-            students[step] = temp;
-            //drawStudentsJustAfterSwapping(0, minIndex);
-        });
+                    System.out.println("min Index "+ minIndex[0]);
 
-        Timeline timeline = new Timeline(Compare,Swap);
+                    if(counter > (ARRAY_SIZE)){
+
+                        if(counter == (ARRAY_SIZE+1)){
+                            drawStudentsComparingJustBeforeSwapping(visualizationStep, minIndex[0]);
+
+                        }
+
+                        if(counter == (ARRAY_SIZE+2)) {
+                            Student temp = students[minIndex[0]];
+                            students[minIndex[0]] = students[visualizationStep];
+                            students[visualizationStep] = temp;
+                            drawStudentsJustAfterSwapping(0, minIndex[0]);
+                        }
+                    }
+
+
+
+                })
+        );
+        timeline.setCycleCount(ARRAY_SIZE+1);
         timeline.play();
 
+//        if(counter == (ARRAY_SIZE+2)) {
+//            visualizationStep += 1;
+//        }
 
-//        int minIndex = step;
-//        for (int i = step + 1; i < ARRAY_SIZE; i++) {
+//        int minIndex = visualizationStep;
+//        for (int i = visualizationStep + 1; i < ARRAY_SIZE; i++) {
 //            if (students[i].getGrade() < students[minIndex].getGrade()) {
 //                minIndex = i;
 //            }
@@ -228,10 +272,11 @@ public class AnimationTest extends Application {
 //
 //        // Swap
 //        Student temp = students[minIndex];
-//        students[minIndex] = students[step];
-//        students[step] = temp;
+//        students[minIndex] = students[visualizationStep];
+//        students[visualizationStep] = temp;
 //
 //        drawStudentsJustAfterSwapping(0, minIndex);
+
     }
     private void bubbleSortStep() {
         if (step < ARRAY_SIZE - 1) {
