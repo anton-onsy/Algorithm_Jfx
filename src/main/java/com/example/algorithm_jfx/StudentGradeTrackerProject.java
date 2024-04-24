@@ -18,17 +18,24 @@ import javafx.util.Duration;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
+
 
 
 
 public class StudentGradeTrackerProject extends Application {
 
-    public static final int StdNum = 3;
-    ArrayList<studentTracker> students;
+    public static final int StdNum = 5;
+    static studentTracker[] students;
     HBox[] hBoxes;
     ObservableList<String> sortingName;
     ComboBox<String> sortingAlgorithmComboBox;
+    public AnimationStage animationStage;
+    Scene scene1;
+    Scene scene2;
+    private static final int MAX_GRADE = 100;
+
 
 
     public static void main(String[] args) {
@@ -38,41 +45,21 @@ public class StudentGradeTrackerProject extends Application {
     @Override
     public void start(Stage primaryStage) {
         sortingName = FXCollections.observableArrayList("selection", "bubble");
-        students = new ArrayList<>();
-
-        // Create grid for student data
-        GridPane gridPane = new GridPane();
-        gridPane.setPadding(new Insets(10));
-        gridPane.setHgap(20);
-        gridPane.setVgap(10);
-
-        Label nameLabel = new Label("Student Name");
-        Label gradeLabel = new Label("Grade");
-        HBox h1=new HBox();
-        h1.getChildren().addAll(nameLabel,gradeLabel);
-        nameLabel.setStyle("-fx-font-weight: bold;");
-        gradeLabel.setStyle("-fx-font-weight: bold;");
-        h1.setSpacing(50);
-        gridPane.getChildren().addAll(h1);
-        hBoxes=new HBox[StdNum];
-        Random random = new Random();
+        students = new studentTracker[StdNum];
+Random random =new Random();
         for (int i = 0; i < StdNum; i++) {
-            students.add(new studentTracker("Student" + i, random.nextInt(100)));
-            Label studentNameLabel = new Label(students.get(i).getName());
-            Label gradeLabelValue = new Label(Integer.toString(students.get(i).getGrade()));
-            HBox hBox= new HBox();
-            hBox.getChildren().addAll(studentNameLabel, gradeLabelValue);
-            hBox.setSpacing(85);
-            hBoxes[i]=hBox;
-            gridPane.add(hBox, 0, i+1);
-            if (i % 2 == 0) {
-                hBox.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));
-            } else {
-                hBox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
-            }
+            students[i] = new studentTracker("Student"+ (i+1) ,(int)(Math.random() * MAX_GRADE));
         }
 
-        Collections.shuffle(students);
+        GridPane gridPane=DrawGridPane(new GridPane());
+
+        animationStage=new AnimationStage();
+        animationStage.hbox=new HBox();
+        animationStage.hbox.setAlignment(Pos.CENTER);
+        animationStage.hbox.setStyle("-fx-border-color: black;");
+        animationStage.drawStudents(students);
+
+       // Collections.shuffle(List.of(students));
 
         // Create buttons and combo box
         Button sortButton = new Button("Sort");
@@ -84,9 +71,17 @@ public class StudentGradeTrackerProject extends Application {
             String selectedItem = sortingAlgorithmComboBox.getValue();
             if (selectedItem != null) {
                 if (selectedItem.equals("selection")) {
-                    animateSelectionSort(students,gridPane);
+                    Button b1=new Button("back");
+                    GridPane g1=new GridPane();
+                    g1.getChildren().addAll(animationStage.hbox,b1);
+                    g1.setAlignment(Pos.BOTTOM_CENTER);
+                    primaryStage.setScene(scene2=new Scene(g1,500,400));
+                    primaryStage.show();
+                    b1.setOnAction(actionEvent -> {
+                        primaryStage.setScene(scene1);
+                    });
                 } else if (selectedItem.equals("bubble")) {
-                    animateBubbleSort(students);
+                  //  animateBubbleSort(students);
                 }
             } else {
                 System.out.println("No sorting algorithm selected.");
@@ -94,9 +89,8 @@ public class StudentGradeTrackerProject extends Application {
         });
 
         shuffleButton.setOnAction(event -> {
+           // Collections.shuffle(List.of(students));
 
-            Collections.shuffle(students);
-            //updateGridView(gridPane);
         });
 
         // Layout configuration for buttons and combo box
@@ -111,81 +105,110 @@ public class StudentGradeTrackerProject extends Application {
 
         // Create main BorderPane to hold grid and buttons
         BorderPane root = new BorderPane();
-        root.setCenter(gridPane);
         root.setBottom(bottomLayout);
+        root.setCenter(gridPane);
 
-        Scene scene = new Scene(root, 500, 400);
-        primaryStage.setScene(scene);
+        scene1 = new Scene(root, 500, 400);
+        primaryStage.setScene(scene1);
         primaryStage.show();
+
     }
 
-    private void animateBubbleSort(ArrayList<studentTracker> students) {
-        Timeline timeline = new Timeline();
-        boolean swapped;
-        do {
-            swapped = false;
-            for (int i = 0; i < students.size() - 1; i++) {
-                if (students.get(i).getGrade() > students.get(i + 1).getGrade()) {
-                    Collections.swap(students, i, i + 1);
+//    private void animateBubbleSort(ArrayList<studentTracker> students) {
+//        Timeline timeline = new Timeline();
+//        boolean swapped;
+//        do {
+//            swapped = false;
+//            for (int i = 0; i < students.size() - 1; i++) {
+//                if (students.get(i).getGrade() > students.get(i + 1).getGrade()) {
+//                    Collections.swap(students, i, i + 1);
+//
+//                    swapped = true;
+//                }
+//            }
+//        } while (swapped);
+//        timeline.play();
+//    }
+//
+//
+//    private void animateSelectionSort(ArrayList<studentTracker> students) {
+//        for (int i = 0; i < students.size() - 1; i++) {
+//            int minIndex = i;
+//            int swapIndex=minIndex;
+//            for (int j = i + 1; j < students.size(); j++) {
+//                if (students.get(j).getGrade() < students.get(minIndex).getGrade()) {
+//                    swapIndex = j;
+//                } else if (students.get(j).getGrade() > students.get(minIndex).getGrade()) {
+//                    continue;
+//                }
+//                else
+//                {
+//                    break;
+//                }
+//            }
+//            if (swapIndex == minIndex){
+//                break;
+//            }
+//            if(minIndex!=swapIndex) {
+//              AnimationSelectionGrades(minIndex,swapIndex);
+//
+//
+//            }
+//        }
+//
+//
+//    }
 
-                    swapped = true;
-                }
+
+    public GridPane DrawGridPane (GridPane gridPane){
+
+        gridPane.setPadding(new Insets(10));
+        gridPane.setHgap(20);
+        gridPane.setVgap(10);
+
+        Label nameLabel = new Label("Student Name");
+        Label gradeLabel = new Label("Grade");
+        HBox h1 = new HBox();
+        h1.getChildren().addAll(nameLabel, gradeLabel);
+        nameLabel.setStyle("-fx-font-weight: bold;");
+        gradeLabel.setStyle("-fx-font-weight: bold;");
+        h1.setSpacing(50);
+        gridPane.getChildren().addAll(h1);
+        hBoxes = new HBox[StdNum];
+
+        for (int i = 0; i < StdNum; i++) {
+//            students[i].setName("Student"+"i");
+//            students[i].setGrade((int) (Math.random() * StdNum));
+            Label studentNameLabel = new Label(students[i].getName());
+            Label gradeLabelValue = new Label(Integer.toString(students[i].getGrade()));
+            HBox hBox = new HBox();
+            hBox.getChildren().addAll(studentNameLabel, gradeLabelValue);
+            hBox.setSpacing(85);
+            hBoxes[i] = hBox;
+            gridPane.add(hBox, 0, i + 1);
+            if (i % 2 == 0) {
+                hBox.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));
+            } else {
+                hBox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
             }
-        } while (swapped);
-        timeline.play();
-    }
-
-
-
-
-    private void animateSelectionSort(ArrayList<studentTracker> students, GridPane gridPane) {
-        Timeline timeline = new Timeline();
-        timeline.setCycleCount(students.size());
-        for (int i = 0; i < students.size() - 1; i++) {
-            final int minIndex = i;
-            timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(i), event -> {
-                int minGrade = students.get(minIndex).getGrade();
-                int swapIndex = minIndex;
-                for (int j = minIndex + 1; j < students.size(); j++) {
-                    if (students.get(j).getGrade() < minGrade) {
-                        System.out.println("area 1");
-                        minGrade = students.get(j).getGrade();
-                        swapIndex = j;
-                    }
-                }
-                if (swapIndex != minIndex) {
-                    // Swap students
-                    System.out.println("area 2");
-                    Collections.swap(students, minIndex, swapIndex);
-                    // Animate hBoxes
-                    TranslateTransition tt1 = new TranslateTransition(Duration.seconds(1), hBoxes[minIndex]);
-                    TranslateTransition tt2 = new TranslateTransition(Duration.seconds(1), hBoxes[swapIndex]);
-
-                    tt1.setToY((swapIndex - minIndex) * hBoxes[minIndex].getHeight());
-                    tt2.setToY((minIndex - swapIndex) * hBoxes[swapIndex].getHeight());
-                    tt1.play();
-                    tt2.play();
-
-                    int finalSwapIndex = swapIndex;
-                  tt1.setOnFinished(e -> {
-                        hBoxes[minIndex].setTranslateY(0);
-                        gridPane.getChildren().remove(hBoxes[minIndex]);
-                        gridPane.add(hBoxes[minIndex], 0, finalSwapIndex + 1);
-                    });
-                    tt2.setOnFinished(e -> {
-                        hBoxes[finalSwapIndex].setTranslateY(0);
-                        gridPane.getChildren().remove(hBoxes[finalSwapIndex]);
-                        gridPane.add(hBoxes[finalSwapIndex], 0, minIndex + 1);
-                    });
-                    // Swap hBoxes
-                    HBox temp = hBoxes[minIndex];
-                    hBoxes[minIndex] = hBoxes[swapIndex];
-                    hBoxes[swapIndex] = temp;
-                }
-            }));
         }
-        timeline.play();
+return gridPane;
     }
+    public void AnimationSelectionGrades(Integer minIndex,Integer swapIndex){
+        Timeline timeline=new Timeline(new KeyFrame(Duration.millis(1),actionEvent ->{
+            for (int i=0;i<students.length;i++) {
+                hBoxes[minIndex].setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
 
+                HBox temp = hBoxes[minIndex];
+                hBoxes[minIndex] = hBoxes[swapIndex];
+                hBoxes[swapIndex] = temp;
+                hBoxes[minIndex].setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+
+            }
+
+        } ));
+timeline.setCycleCount(students.length);
+timeline.play();
+    }
 
 }

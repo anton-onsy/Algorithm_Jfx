@@ -10,55 +10,61 @@ import java.util.ArrayList;
 
 
     public class studentTracker extends Node {
-/**//*
+
         //private final ArrayList<Integer> grades;
-        String Name;
-        Integer Stdgrade;
+        static String Name;
+        static Integer Stdgrade;
 
         public studentTracker(String name,Integer grade) {
           this.Stdgrade=grade;
             this.Name = name;
         }
 
-        public String getName() {
+        public static String getName() {
             return Name;
         }
 
-        public  Integer getGrade() {
+        public static Integer getGrade() {
             return Stdgrade;
         }
-*/
-private SimpleStringProperty name;
-        private SimpleIntegerProperty grade;
-
-        public studentTracker(String name, int grade) {
-            this.name = new SimpleStringProperty(name);
-            this.grade = new SimpleIntegerProperty(grade);
+        public void setName(String name){
+            Name=name;
+        }
+        public void setGrade(Integer grade){
+            Stdgrade=grade;
         }
 
-        public String getName() {
-            return name.get();
-        }
-
-        public void setName(String name) {
-            this.name.set(name);
-        }
-
-        public int getGrade() {
-            return grade.get();
-        }
-
-        public void setGrade(int grade) {
-            this.grade.set(grade);
-        }
-
-        public SimpleStringProperty nameProperty() {
-            return name;
-        }
-
-        public SimpleIntegerProperty gradeProperty() {
-            return grade;
-        }
+//private SimpleStringProperty name;
+//        private SimpleIntegerProperty grade;
+//
+//        public studentTracker(String name, int grade) {
+//            this.name = new SimpleStringProperty(name);
+//            this.grade = new SimpleIntegerProperty(grade);
+//        }
+//
+//        public String getName() {
+//            return name.get();
+//        }
+//
+//        public void setName(String name) {
+//            this.name.set(name);
+//        }
+//
+//        public static int getGrade() {
+//            return grade;
+//        }
+//
+//        public void setGrade(int grade) {
+//            this.grade.set(grade);
+//        }
+//
+//        public SimpleStringProperty nameProperty() {
+//            return name;
+//        }
+//
+//        public SimpleIntegerProperty gradeProperty() {
+//            return grade;
+//        }
         ///////////////////studentName sorting Algorithm\\\\\\\\\\\\\\\\\\\\\\\
         //////////////////// selection sort\\\\\\\\\\\\\\\\\\\\
         public static void selectionSortStd(ArrayList<studentTracker> students) {
