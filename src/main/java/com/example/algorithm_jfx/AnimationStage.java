@@ -10,16 +10,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
-
 
 public class AnimationStage {
     private static final int ARRAY_SIZE = 5;
     private static final int RECTANGLE_WIDTH =100 ;
     private static final int MAX_GRADE = 100;
-     public studentTracker [] students;
+     public Student [] students;
     public HBox hbox;
     private int step;
 
@@ -38,10 +34,10 @@ public class AnimationStage {
         timeline.setCycleCount(ARRAY_SIZE);
         timeline.play();
     }
-    public HBox drawStudents(studentTracker[]students) {
+    public HBox drawStudents(Student[] students) {
         hbox.getChildren().clear();
         for (int i = 0; i < ARRAY_SIZE; i++) {
-            Rectangle rectangle = new Rectangle(RECTANGLE_WIDTH, 50 * studentTracker.getGrade() / MAX_GRADE, Color.GRAY);
+            Rectangle rectangle = new Rectangle(RECTANGLE_WIDTH, 50 * students[i].getGrade() / MAX_GRADE, Color.GRAY);
             rectangle.setStroke(Color.WHITE);
             rectangle.setStrokeWidth(2);
             rectangle.setHeight(students[i].getGrade());
@@ -63,7 +59,7 @@ public class AnimationStage {
             }
         }
         // Swap
-        studentTracker temp = students[minIndex];
+        Student temp = students[minIndex];
         students[minIndex] = students[step];
         students[step] = temp;
     }
