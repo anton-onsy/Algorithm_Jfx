@@ -92,7 +92,7 @@ Random random =new Random();
                     g1.getChildren().addAll(hbox,b1);
 
                     g1.setAlignment(Pos.BOTTOM_CENTER);
-                    primaryStage.setScene(scene2=new Scene(g1,RECTANGLE_WIDTH*StdNum,400));
+                    primaryStage.setScene(scene2=new Scene(g1,RECTANGLE_WIDTH*StdNum*3,400));
                     primaryStage.show();
                     b1.setOnAction(actionEvent -> {
                         primaryStage.setScene(scene1);

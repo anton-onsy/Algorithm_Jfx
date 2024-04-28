@@ -202,6 +202,7 @@ public class AnimationTest extends Application {
             students[randomIndex] = temp;
         }
         step = 0;
+        visualizationStep = 0;
     }
 
     private void selectionSortStep() {
@@ -218,25 +219,25 @@ public class AnimationTest extends Application {
     }
 
     private void selectionSortStepVisualization() {
-        counter = visualizationStep+1;
+        counter = visualizationStep;
         final int[] minIndex = {visualizationStep};
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1), e -> {
-
-                    if(counter<ARRAY_SIZE){
+                new KeyFrame(Duration.seconds(.5), e -> {
+                    if(counter<ARRAY_SIZE ){
                         drawStudentsComparing(visualizationStep, counter);
                         if (students[counter].getGrade() < students[minIndex[0]].getGrade()) {
                             minIndex[0] = counter;
                         }
                     }
 
-                    System.out.println("before adding "+counter);
+
+                    System.out.println("counter before adding "+counter);
                     counter++;
-                    System.out.println("after adding "+counter);
+                    System.out.println("counter after adding "+counter);
 
                     System.out.println("min Index "+ minIndex[0]);
 
-                    if(counter > (ARRAY_SIZE)){
+                    if(counter > ARRAY_SIZE){
 
                         if(counter == (ARRAY_SIZE+1)){
                             drawStudentsComparingJustBeforeSwapping(visualizationStep, minIndex[0]);
@@ -247,15 +248,20 @@ public class AnimationTest extends Application {
                             Student temp = students[minIndex[0]];
                             students[minIndex[0]] = students[visualizationStep];
                             students[visualizationStep] = temp;
-                            drawStudentsJustAfterSwapping(0, minIndex[0]);
+                            drawStudentsJustAfterSwapping(visualizationStep, minIndex[0]);
                         }
                     }
 
+                    if(counter==(ARRAY_SIZE + 2)){
+                        visualizationStep++;
+                    }
+                    System.out.println("Visualization step now is "+visualizationStep);
 
 
                 })
         );
-        timeline.setCycleCount(ARRAY_SIZE+1);
+
+        timeline.setCycleCount(ARRAY_SIZE+2-visualizationStep);
         timeline.play();
 
 //        if(counter == (ARRAY_SIZE+2)) {

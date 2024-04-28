@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="44467efd-aa85-4cd1-86d0-790f797d3aff" name="Changes" comment="approximately final one" />
+    <list default="true" id="44467efd-aa85-4cd1-86d0-790f797d3aff" name="Changes" comment="first visualization">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_20_2024_4_18_PM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_20_2024_4_18_PM__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_20_2024_8_01_PM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_20_2024_8_01_PM__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/AnimationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/AnimationTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -35,7 +43,7 @@
     </option>
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
@@ -46,30 +54,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.AnimationTest.executor&quot;: &quot;Run&quot;,
-    &quot;Application.StudentGradeTrackerProject.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Test.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/20109/IdeaProjects/Algorithm_Jfx&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.AnimationTest.executor": "Run",
+    "Application.StudentGradeTrackerProject.executor": "Run",
+    "Application.Test.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/20109/IdeaProjects/Algorithm_Jfx",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.0",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -90,6 +98,10 @@
       <workItem from="1713902345387" duration="4593000" />
       <workItem from="1713970126809" duration="3654000" />
       <workItem from="1713973784996" duration="741000" />
+      <workItem from="1713988068311" duration="3225000" />
+      <workItem from="1714066239617" duration="8000" />
+      <workItem from="1714159797732" duration="55000" />
+      <workItem from="1714293309271" duration="7163000" />
     </task>
     <task id="LOCAL-00001" summary="first visualization">
       <created>1713122013284</created>
@@ -114,12 +126,13 @@
       <option name="project" value="LOCAL" />
       <updated>1713546117004</updated>
     </task>
-    <task id="LOCAL-00004" summary="approximately final one">
-      <created>1714061464105</created>
+    <task id="LOCAL-00004" summary="first visualization">
+      <option name="closed" value="true" />
+      <created>1713981987592</created>
       <option name="number" value="00004" />
       <option name="presentableId" value="LOCAL-00004" />
       <option name="project" value="LOCAL" />
-      <updated>1714061464105</updated>
+      <updated>1713981987592</updated>
     </task>
     <option name="localTasksCounter" value="5" />
     <servers />
@@ -140,8 +153,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="first visualization" />
-    <MESSAGE value="approximately final one" />
-    <option name="LAST_COMMIT_MESSAGE" value="approximately final one" />
+    <option name="LAST_COMMIT_MESSAGE" value="first visualization" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
