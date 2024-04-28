@@ -26,6 +26,7 @@ public class AnimationTest extends Application {
     private HBox hbox;
     private int step;
     private int visualizationStep = 0;
+    private int sortedElemAmount = 0;
     int counter;
     private boolean sortingActive;
 
@@ -107,7 +108,10 @@ public class AnimationTest extends Application {
 
             Rectangle rectangle = null;
             //Coloring
-            if(i != firstInd & i != secondInd){
+            if(sortedElemAmount-i>0){
+                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.GREEN);
+            }
+            else if(i != firstInd & i != secondInd){
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.LIGHTGREY);
             } else if (i == firstInd) {
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.RED);
@@ -132,7 +136,10 @@ public class AnimationTest extends Application {
 
             Rectangle rectangle;
             //Coloring
-            if(i != firstInd & i != secondInd){
+            if(sortedElemAmount-i>0){
+                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.GREEN);
+            }
+            else if(i != firstInd & i != secondInd){
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.LIGHTGREY);
             } else {
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.RED);
@@ -156,7 +163,10 @@ public class AnimationTest extends Application {
 
             Rectangle rectangle;
             //Coloring
-            if(i != firstInd & i != secondInd){
+            if(sortedElemAmount-i>0){
+                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.GREEN);
+            }
+            else if(i != firstInd & i != secondInd){
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.LIGHTGREY);
             } else {
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.GREEN);
@@ -223,6 +233,11 @@ public class AnimationTest extends Application {
         final int[] minIndex = {visualizationStep};
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.seconds(.5), e -> {
+
+                    System.out.println("counter before adding "+counter);
+                    counter++;
+                    System.out.println("counter after adding "+counter);
+
                     if(counter<ARRAY_SIZE ){
                         drawStudentsComparing(visualizationStep, counter);
                         if (students[counter].getGrade() < students[minIndex[0]].getGrade()) {
@@ -231,20 +246,18 @@ public class AnimationTest extends Application {
                     }
 
 
-                    System.out.println("counter before adding "+counter);
-                    counter++;
-                    System.out.println("counter after adding "+counter);
+
 
                     System.out.println("min Index "+ minIndex[0]);
 
-                    if(counter > ARRAY_SIZE){
+                    if(counter >= ARRAY_SIZE){
 
-                        if(counter == (ARRAY_SIZE+1)){
+                        if(counter == (ARRAY_SIZE)){
                             drawStudentsComparingJustBeforeSwapping(visualizationStep, minIndex[0]);
 
                         }
 
-                        if(counter == (ARRAY_SIZE+2)) {
+                        if(counter == (ARRAY_SIZE+1)) {
                             Student temp = students[minIndex[0]];
                             students[minIndex[0]] = students[visualizationStep];
                             students[visualizationStep] = temp;
@@ -252,16 +265,18 @@ public class AnimationTest extends Application {
                         }
                     }
 
-                    if(counter==(ARRAY_SIZE + 2)){
+                    if(counter==(ARRAY_SIZE + 1)){
                         visualizationStep++;
+                        sortedElemAmount++;
                     }
                     System.out.println("Visualization step now is "+visualizationStep);
+                    System.out.println("Sorted elements amount  is "+sortedElemAmount);
 
 
                 })
         );
 
-        timeline.setCycleCount(ARRAY_SIZE+2-visualizationStep);
+        timeline.setCycleCount(ARRAY_SIZE+1-visualizationStep);
         timeline.play();
 
 //        if(counter == (ARRAY_SIZE+2)) {
