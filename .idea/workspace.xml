@@ -5,8 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="44467efd-aa85-4cd1-86d0-790f797d3aff" name="Changes" comment="first visualization">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_21_2024_1_03_PM_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_21_2024_1_03_PM__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/AnimationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/AnimationTest.java" afterDir="false" />
     </list>
@@ -99,7 +97,7 @@
       <workItem from="1714066239617" duration="8000" />
       <workItem from="1714159797732" duration="55000" />
       <workItem from="1714293309271" duration="7437000" />
-      <workItem from="1714301056825" duration="943000" />
+      <workItem from="1714301056825" duration="1577000" />
     </task>
     <task id="LOCAL-00001" summary="first visualization">
       <created>1713122013284</created>
@@ -140,7 +138,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714300628577</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="first visualization">
+      <option name="closed" value="true" />
+      <created>1714302165015</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1714302165015</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

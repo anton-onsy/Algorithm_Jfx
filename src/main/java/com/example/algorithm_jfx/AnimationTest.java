@@ -166,10 +166,11 @@ public class AnimationTest extends Application {
             if(sortedElemAmount-i>0){
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.GREEN);
             }
-            else if(i != firstInd & i != secondInd){
-                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.LIGHTGREY);
-            } else {
+            else if(i == firstInd) {
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.GREEN);
+            }
+            else{
+                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.LIGHTGREY);
             }
 
 
@@ -213,6 +214,7 @@ public class AnimationTest extends Application {
         }
         step = 0;
         visualizationStep = 0;
+        sortedElemAmount = 0;
     }
 
     private void selectionSortStep() {
