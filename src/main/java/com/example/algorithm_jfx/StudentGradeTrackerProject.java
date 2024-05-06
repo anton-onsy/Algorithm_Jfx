@@ -523,6 +523,7 @@ timeline.play();
             drawStudents();
         }
     }
+    //
 
     private void cycleSortStepVisualization() {
         counter = visualizationStep + 1;
