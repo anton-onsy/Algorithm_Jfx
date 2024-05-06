@@ -35,6 +35,7 @@ public class StudentGradeTrackerProject extends Application {
     public AnimationStage animationStage;
     Scene scene1;
     Scene scene2;
+    Scene scene3;
     private static final int MAX_GRADE = 100;
     private HBox hbox;
     private int step;
@@ -50,7 +51,7 @@ public class StudentGradeTrackerProject extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        sortingName = FXCollections.observableArrayList("selection", "bubble");
+        sortingName = FXCollections.observableArrayList("selection", "bubble","cycle");
         students = new Student[StdNum];
 Random random =new Random();
         for (int i = 0; i < StdNum; i++) {
@@ -112,6 +113,21 @@ Random random =new Random();
                         DrawGridPane(gridPane);
                     });
                 }
+                else if (selectedItem.equals("cycle")) {
+                    sortingActive = true;
+                    startSorting("Bubble Sort");
+                    Button b1=new Button("back");
+                    GridPane g1=new GridPane();
+                    g1.getChildren().addAll(hbox,b1);
+                    g1.setAlignment(Pos.BOTTOM_CENTER);
+                    primaryStage.setScene(scene3=new Scene(g1, 500,400));
+                    primaryStage.show();
+                    b1.setOnAction(actionEvent -> {
+                        primaryStage.setScene(scene1);
+                        DrawGridPane(gridPane);
+                    });
+                }
+
             } else {
                 System.out.println("No sorting algorithm selected.");
             }
@@ -336,6 +352,8 @@ timeline.play();
                             selectionSortStep();
                         } else if (sortingType.equals("Bubble Sort")) {
                             bubbleSortStep();
+                        }else if(sortingType.equals("Cycle Sort")) {
+                            cycleSortStep();
                         }
                         drawStudents();
                         System.out.println(step);
@@ -445,4 +463,152 @@ timeline.play();
             }
         }
     }
+    private void cycleSortStep() {
+        int writes = 0;
+
+        // Traverse array elements and put them in the right place
+        for (int cycleStart = 0; cycleStart < StdNum - 1; cycleStart++) {
+            int item = students[cycleStart].getGrade();
+            int pos = cycleStart;
+
+            // Find position where we put the element which is currently at cycleStart
+            for (int i = cycleStart + 1; i < StdNum; i++) {
+                if (students[i].getGrade() < item) {
+                    pos++;
+                }
+            }
+
+            // If the item is already in the correct position, skip
+            if (pos == cycleStart) {
+                continue;
+            }
+
+            // Skip elements that are already sorted
+            while (item == students[pos].getGrade()) {
+                pos++;
+            }
+
+            // Move the item to its correct position
+            if (pos != cycleStart) {
+                int temp = students[pos].getGrade();
+                students[pos].setGrade(item);
+                item = temp;
+                writes++;
+            }
+
+            // Rotate the rest of the cycle
+            while (pos != cycleStart) {
+                pos = cycleStart;
+                for (int i = cycleStart + 1; i < StdNum; i++) {
+                    if (students[i].getGrade() < item) {
+                        pos++;
+                    }
+                }
+
+                // Skip elements that are already sorted
+                while (item == students[pos].getGrade()) {
+                    pos++;
+                }
+
+                // Move the item to its correct position
+                if (item != students[pos].getGrade()) {
+                    int temp = students[pos].getGrade();
+                    students[pos].setGrade(item);
+                    item = temp;
+                    writes++;
+                }
+            }
+
+            // Update GUI
+            drawStudents();
+        }
+    }
+
+    private void cycleSortStepVisualization() {
+        counter = visualizationStep + 1;
+        final int[] minIndex = {visualizationStep};
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(1), e -> {
+                    int writes = 0;
+                    int item = students[visualizationStep].getGrade();
+                    int pos = visualizationStep;
+
+                    // Find position where we put the element which is currently at visualizationStep
+                    for (int i = visualizationStep + 1; i < StdNum; i++) {
+                        if (students[i].getGrade() < item) {
+                            pos++;
+                        }
+                    }
+
+                    // If the item is already in the correct position, skip
+                    if (pos == visualizationStep) {
+                        counter++;
+                        return;
+                    }
+
+                    // Skip elements that are already sorted
+                    while (item == students[pos].getGrade()) {
+                        pos++;
+                    }
+
+                    // Move the item to its correct position
+                    if (pos != visualizationStep) {
+                        Student temp = students[pos];
+                        students[pos] = new Student("Default Name", item); // Instantiate new Student with a default name
+                        item = temp.getGrade();
+                        writes++;
+                    }
+
+                    // Rotate the rest of the cycle
+                    while (pos != visualizationStep) {
+                        pos = visualizationStep;
+                        for (int i = visualizationStep + 1; i < StdNum; i++) {
+                            if (students[i].getGrade() < item) {
+                                pos++;
+                            }
+                        }
+
+                        // Skip elements that are already sorted
+                        while (item == students[pos].getGrade()) {
+                            pos++;
+                        }
+
+                        // Move the item to its correct position
+                        if (item != students[pos].getGrade()) {
+                            Student temp = students[pos];
+                            students[pos] = new Student("Default Name", item); // Instantiate new Student with a default name
+                            item = temp.getGrade();
+                            writes++;
+                        }
+                    }
+
+                    // Update GUI
+                    drawStudents();
+
+                    System.out.println("before adding " + counter);
+                    counter++;
+                    System.out.println("after adding " + counter);
+
+                    System.out.println("min Index " + minIndex[0]);
+
+                    // Perform visualization updates
+                    if (counter > StdNum) {
+                        if (counter == (StdNum + 1)) {
+                            drawStudentsComparingJustBeforeSwapping(visualizationStep, minIndex[0]);
+                        }
+
+                        if (counter == (StdNum + 2)) {
+                            Student temp = students[minIndex[0]];
+                            students[minIndex[0]] = students[visualizationStep];
+                            students[visualizationStep] = temp;
+                            drawStudentsJustAfterSwapping(0, minIndex[0]);
+                        }
+                    }
+                })
+        );
+        timeline.setCycleCount(StdNum + 1);
+        timeline.play();
+    }
+
 }
