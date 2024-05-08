@@ -5,11 +5,10 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.control.skin.ButtonSkin;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -20,6 +19,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.nio.channels.Pipe;
 import java.util.Random;
 
 
@@ -27,7 +27,7 @@ import java.util.Random;
 
 public class StudentGradeTrackerProject extends Application {
 
-    public static final int StdNum = 5;
+    public static final int StdNum = 100;
     static Student[] students;
     HBox[] hBoxes;
     ObservableList<String> sortingName;
@@ -42,8 +42,11 @@ public class StudentGradeTrackerProject extends Application {
     private int visualizationStep = 0;
     int counter;
     private boolean sortingActive;
-    private static final int RECTANGLE_WIDTH = 75;
- private GridPane gridPane;
+    private int RECTANGLE_WIDTH =10;
+    public ScrollBar scrollBar;
+    public ScrollBar scrollBar2;
+
+ private static GridPane gridPane;
 
     public static void main(String[] args) {
         launch(args);
@@ -51,6 +54,7 @@ public class StudentGradeTrackerProject extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
         sortingName = FXCollections.observableArrayList("selection", "bubble","cycle");
         students = new Student[StdNum];
 Random random =new Random();
@@ -60,19 +64,30 @@ Random random =new Random();
 
         gridPane=new GridPane();
         DrawGridPane(gridPane);
-
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setMaxSize(500,11*StdNum);
+       // gridPane.setMinHeight();
         hbox = new HBox();
         hbox.setAlignment(Pos.CENTER);
         hbox.setSpacing(10);
         hbox.setPadding(new Insets(10));
+        scrollBar=new ScrollBar();
+        scrollBar.setOrientation(Orientation.VERTICAL);
+        scrollBar.setMin(gridPane.getMinHeight());
+        scrollBar.setMax(gridPane.getMaxHeight()*StdNum/10);
+        scrollBar.setValue(0);
+        scrollBar.adjustValue(gridPane.getMaxHeight());
+        gridPane.translateYProperty().bind(scrollBar.valueProperty().negate());
 
-//        animationStage=new AnimationStage();
-//        animationStage.hbox=new HBox();
-//        animationStage.hbox.setAlignment(Pos.CENTER);
-//        animationStage.hbox.setStyle("-fx-border-color: black;");
-//        animationStage.drawStudents(students);
-
-       // Collections.shuffle(List.of(students));
+        gridPane.setOnScroll(event -> {
+            double deltaY = event.getDeltaY()*0.5;
+            scrollBar.setValue(scrollBar.getValue() - deltaY);
+        });
+        scrollBar2=new ScrollBar();
+        scrollBar2.setOrientation(Orientation.HORIZONTAL);
+        scrollBar2.setMin(gridPane.getMinWidth());
+        scrollBar2.setMax(gridPane.getMaxWidth()*StdNum/10);
+        scrollBar2.setValue(0);
 
         // Create buttons and combo box
         Button sortButton = new Button("Sort");
@@ -90,10 +105,20 @@ Random random =new Random();
                     b1.setStyle("-fx-background-color: #D3D3D3;-fx-text-fill: Black;");
 
                     GridPane g1=new GridPane();
-                    g1.getChildren().addAll(hbox,b1);
-
+                    g1.getChildren().addAll(hbox);
+                    g1.translateXProperty().bind(scrollBar2.valueProperty().negate());
                     g1.setAlignment(Pos.BOTTOM_CENTER);
-                    primaryStage.setScene(scene2=new Scene(g1,RECTANGLE_WIDTH*StdNum*3,400));
+                    BorderPane borderPane=new BorderPane();
+                    borderPane.setCenter(g1);
+                    borderPane.setTop(b1);
+                    borderPane.setBottom(scrollBar2);
+
+                    g1.setOnScroll(event2 -> {
+                        double deltaX = event2.getDeltaX()*0.5;
+                        scrollBar2.setValue(scrollBar2.getValue() - deltaX);
+                    });
+
+                    primaryStage.setScene(scene2=new Scene(borderPane,500,400));
                     primaryStage.show();
                     b1.setOnAction(actionEvent -> {
                         primaryStage.setScene(scene1);
@@ -104,9 +129,18 @@ Random random =new Random();
                     startSorting("Bubble Sort");
                     Button b1=new Button("back");
                     GridPane g1=new GridPane();
-                    g1.getChildren().addAll(hbox,b1);
+                    g1.getChildren().addAll(hbox);
+                    g1.translateXProperty().bind(scrollBar2.valueProperty().negate());
                     g1.setAlignment(Pos.BOTTOM_CENTER);
-                    primaryStage.setScene(scene2=new Scene(g1, 500,400));
+                    BorderPane borderPane=new BorderPane();
+                    borderPane.setCenter(g1);
+                    borderPane.setTop(b1);
+                    borderPane.setBottom(scrollBar2);
+                    g1.setOnScroll(event2 -> {
+                        double deltaX = event2.getDeltaX()*0.5;
+                        scrollBar2.setValue(scrollBar2.getValue() - deltaX);
+                    });
+                    primaryStage.setScene(scene2=new Scene(borderPane, 500,400));
                     primaryStage.show();
                     b1.setOnAction(actionEvent -> {
                         primaryStage.setScene(scene1);
@@ -115,12 +149,23 @@ Random random =new Random();
                 }
                 else if (selectedItem.equals("cycle")) {
                     sortingActive = true;
-                    startSorting("Bubble Sort");
+                    startSorting("Cycle Sort");
                     Button b1=new Button("back");
                     GridPane g1=new GridPane();
-                    g1.getChildren().addAll(hbox,b1);
+                    g1.getChildren().addAll(hbox);
+                    g1.translateXProperty().bind(scrollBar2.valueProperty().negate());
                     g1.setAlignment(Pos.BOTTOM_CENTER);
-                    primaryStage.setScene(scene3=new Scene(g1, 500,400));
+                    BorderPane borderPane=new BorderPane();
+                    borderPane.setCenter(g1);
+                    borderPane.setTop(b1);
+                    borderPane.setBottom(scrollBar2);
+
+                    g1.setOnScroll(event2 -> {
+                        double deltaX = event2.getDeltaX()*0.5;
+                        scrollBar2.setValue(scrollBar2.getValue() - deltaX);
+                    });
+
+                    primaryStage.setScene(scene3=new Scene(borderPane, 500,400));
                     primaryStage.show();
                     b1.setOnAction(actionEvent -> {
                         primaryStage.setScene(scene1);
@@ -144,16 +189,21 @@ Random random =new Random();
         HBox controlButtons = new HBox(sortingAlgorithmComboBox, sortButton, shuffleButton);
         controlButtons.setAlignment(Pos.CENTER);
         controlButtons.setSpacing(20);
+        controlButtons.setMaxSize(500, 100);
+        controlButtons.setMinSize(0,0);
 
         // Create bottom layout for buttons
         BorderPane bottomLayout = new BorderPane();
+        bottomLayout.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));
         bottomLayout.setCenter(controlButtons);
         bottomLayout.setPadding(new Insets(10));
 
         // Create main BorderPane to hold grid and buttons
         BorderPane root = new BorderPane();
-        root.setBottom(bottomLayout);
+
         root.setCenter(gridPane);
+        root.setRight(scrollBar);
+        root.setTop(bottomLayout);
 
         scene1 = new Scene(root, 500, 400);
         primaryStage.setScene(scene1);
@@ -226,8 +276,15 @@ Random random =new Random();
         for (int i = 0; i < StdNum; i++) {
 //            students[i].setName("Student"+"i");
 //            students[i].setGrade((int) (Math.random() * StdNum));
-            Label studentNameLabel = new Label(students[i].getName());
-            Label gradeLabelValue = new Label(Integer.toString(students[i].getGrade()));
+            Label studentNameLabel;
+            Label gradeLabelValue;
+            if(i<=8) {
+                 studentNameLabel = new Label(students[i].getName());
+                 gradeLabelValue = new Label("  "+Integer.toString(students[i].getGrade()));
+            }else{
+                 studentNameLabel = new Label(students[i].getName());
+                 gradeLabelValue = new Label(Integer.toString(students[i].getGrade()));
+            }
             HBox hBox = new HBox();
             hBox.getChildren().addAll(studentNameLabel, gradeLabelValue);
             hBox.setSpacing(85);
@@ -263,7 +320,7 @@ timeline.play();
         for (int i = 0; i < StdNum; i++) {
             Student student = students[i];
             Rectangle rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.LIGHTGREY);
-            Text text = new Text(student.getName() + " (" + student.getGrade() + ")");
+            Text text = new Text(""+student.getGrade());
             text.setFill(Color.BLACK);
             StackPane stackPane = new StackPane(rectangle, text);
             stackPane.setAlignment(Pos.BOTTOM_CENTER);
@@ -612,4 +669,6 @@ timeline.play();
         timeline.play();
     }
 
-}
+    }
+
+

@@ -4,9 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="44467efd-aa85-4cd1-86d0-790f797d3aff" name="Changes" comment="first visualization">
+    <list default="true" id="44467efd-aa85-4cd1-86d0-790f797d3aff" name="Changes" comment="approximately final one">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_21_2024_1_54_PM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_21_2024_1_54_PM__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_22_2024_7_08_PM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_22_2024_7_08_PM__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_24_2024_6_08_PM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_24_2024_6_08_PM__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_24_2024_8_03_PM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_24_2024_8_03_PM__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_25_2024_6_16_PM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_25_2024_6_16_PM__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_26_2024_10_30_PM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_26_2024_10_30_PM__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/AnimationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/AnimationTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,13 +44,13 @@
   <component name="GithubPullRequestsUISettings">
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
-        <option name="accountId" value="fa70ea20-65a9-4913-a5a7-faab234a707a" />
+        <option name="accountId" value="37e496e0-802c-43da-ab92-aeadfc514611" />
         <option name="url" value="https://github.com/anton-onsy/Algorithm_Jfx.git" />
       </UrlAndAccount>
     </option>
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
@@ -93,11 +105,6 @@
       <workItem from="1713902345387" duration="4593000" />
       <workItem from="1713970126809" duration="3654000" />
       <workItem from="1713973784996" duration="741000" />
-      <workItem from="1713988068311" duration="3225000" />
-      <workItem from="1714066239617" duration="8000" />
-      <workItem from="1714159797732" duration="55000" />
-      <workItem from="1714293309271" duration="7437000" />
-      <workItem from="1714301056825" duration="1577000" />
     </task>
     <task id="LOCAL-00001" summary="first visualization">
       <created>1713122013284</created>
@@ -122,31 +129,14 @@
       <option name="project" value="LOCAL" />
       <updated>1713546117004</updated>
     </task>
-    <task id="LOCAL-00004" summary="first visualization">
-      <option name="closed" value="true" />
-      <created>1713981987592</created>
+    <task id="LOCAL-00004" summary="approximately final one">
+      <created>1714061464105</created>
       <option name="number" value="00004" />
       <option name="presentableId" value="LOCAL-00004" />
       <option name="project" value="LOCAL" />
-      <updated>1713981987592</updated>
+      <updated>1714061464105</updated>
     </task>
-    <task id="LOCAL-00005" summary="first visualization">
-      <option name="closed" value="true" />
-      <created>1714300628577</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1714300628577</updated>
-    </task>
-    <task id="LOCAL-00006" summary="first visualization">
-      <option name="closed" value="true" />
-      <created>1714302165015</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1714302165015</updated>
-    </task>
-    <option name="localTasksCounter" value="7" />
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -165,7 +155,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="first visualization" />
-    <option name="LAST_COMMIT_MESSAGE" value="first visualization" />
+    <MESSAGE value="approximately final one" />
+    <option name="LAST_COMMIT_MESSAGE" value="approximately final one" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
