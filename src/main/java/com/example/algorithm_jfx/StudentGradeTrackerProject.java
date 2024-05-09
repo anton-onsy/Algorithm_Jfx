@@ -745,7 +745,7 @@ return gridPane;
         countArray[inputArray[countStep]]--;
 
 
-        Student temp = new Student("Student"+sortedIndex, inputArray[countStep]);
+        Student temp = new Student("Student"+sortedIndex, outputArray[sortedIndex]);
         students[sortedIndex] = temp;
 
     }
