@@ -513,8 +513,28 @@ return gridPane;
             students[i] = students[randomIndex];
             students[randomIndex] = temp;
         }
+        //input array initialization
         for (int i = 0; i < StdNum; i++) {
             inputArray[i] = students[i].getGrade();
+        }
+        // Find the maximum grade in the students array
+        int maxGrade = Integer.MIN_VALUE;
+        for (Student student : students) {
+            if (student.getGrade() > maxGrade) {
+                maxGrade = student.getGrade();
+            }
+        }
+
+        // Initialize count array
+        countArray = new int[maxGrade + 1];
+        // Count occurrences of each grade
+        for (Student student : students) {
+            countArray[student.getGrade()]++;
+        }
+
+        // Modify count array to contain actual position of each grade in output array
+        for (int i = 1; i < countArray.length; i++) {
+            countArray[i] += countArray[i - 1];
         }
         step = 0;
         countStep = StdNum - 1;
