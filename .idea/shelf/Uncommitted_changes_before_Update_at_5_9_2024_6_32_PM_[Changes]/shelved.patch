@@ -1,0 +1,341 @@
+Index: src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.algorithm_jfx;\r\n\r\nimport javafx.animation.*;\r\nimport javafx.application.Application;\r\nimport javafx.collections.FXCollections;\r\nimport javafx.collections.ObservableList;\r\nimport javafx.geometry.Insets;\r\nimport javafx.geometry.Orientation;\r\nimport javafx.geometry.Pos;\r\nimport javafx.scene.Scene;\r\nimport javafx.scene.control.*;\r\nimport javafx.scene.control.skin.ButtonSkin;\r\nimport javafx.scene.image.Image;\r\nimport javafx.scene.image.ImageView;\r\nimport javafx.scene.layout.*;\r\nimport javafx.scene.paint.Color;\r\nimport javafx.scene.shape.Rectangle;\r\nimport javafx.scene.text.Text;\r\nimport javafx.stage.Stage;\r\nimport javafx.util.Duration;\r\n\r\nimport java.nio.channels.Pipe;\r\nimport java.util.Random;\r\n\r\n\r\n\r\n\r\npublic class StudentGradeTrackerProject extends Application {\r\n\r\n    public static final int StdNum = 100;\r\n    static Student[] students;\r\n    HBox[] hBoxes;\r\n    ObservableList<String> sortingName;\r\n    ComboBox<String> sortingAlgorithmComboBox;\r\n    public AnimationStage animationStage;\r\n    Scene scene1;\r\n    Scene scene2;\r\n    Scene scene3;\r\n    private static final int MAX_GRADE = 100;\r\n    private HBox hbox;\r\n    private int step;\r\n    private int visualizationStep = 0;\r\n    int counter;\r\n    private boolean sortingActive;\r\n    private int RECTANGLE_WIDTH =10;\r\n    public ScrollBar scrollBar;\r\n    public ScrollBar scrollBar2;\r\n\r\n private static GridPane gridPane;\r\n\r\n    public static void main(String[] args) {\r\n        launch(args);\r\n    }\r\n\r\n    @Override\r\n    public void start(Stage primaryStage) {\r\n\r\n        sortingName = FXCollections.observableArrayList(\"selection\", \"bubble\",\"cycle\");\r\n        students = new Student[StdNum];\r\nRandom random =new Random();\r\n        for (int i = 0; i < StdNum; i++) {\r\n            students[i] = new Student(\"Student\"+ (i+1) ,(int)(Math.random() * MAX_GRADE));\r\n        }\r\n\r\n        gridPane=new GridPane();\r\n        DrawGridPane(gridPane);\r\n        gridPane.setAlignment(Pos.CENTER);\r\n        gridPane.setMaxSize(500,11*StdNum);\r\n       // gridPane.setMinHeight();\r\n        hbox = new HBox();\r\n        hbox.setAlignment(Pos.CENTER);\r\n        hbox.setSpacing(10);\r\n        hbox.setPadding(new Insets(10));\r\n        scrollBar=new ScrollBar();\r\n        scrollBar.setOrientation(Orientation.VERTICAL);\r\n        scrollBar.setMin(gridPane.getMinHeight());\r\n        scrollBar.setMax(gridPane.getMaxHeight()*StdNum/10);\r\n        scrollBar.setValue(0);\r\n        scrollBar.adjustValue(gridPane.getMaxHeight());\r\n        gridPane.translateYProperty().bind(scrollBar.valueProperty().negate());\r\n\r\n        gridPane.setOnScroll(event -> {\r\n            double deltaY = event.getDeltaY()*0.5;\r\n            scrollBar.setValue(scrollBar.getValue() - deltaY);\r\n        });\r\n        scrollBar2=new ScrollBar();\r\n        scrollBar2.setOrientation(Orientation.HORIZONTAL);\r\n        scrollBar2.setMin(gridPane.getMinWidth());\r\n        scrollBar2.setMax(gridPane.getMaxWidth()*StdNum/10);\r\n        scrollBar2.setValue(0);\r\n\r\n        // Create buttons and combo box\r\n        Button sortButton = new Button(\"Sort\");\r\n        Button shuffleButton = new Button(\"Shuffle\");\r\n        sortingAlgorithmComboBox = new ComboBox<>(sortingName);\r\n        sortingAlgorithmComboBox.setPromptText(\"Select sorting algorithm\");\r\n\r\n        sortButton.setOnAction(event -> {\r\n            String selectedItem = sortingAlgorithmComboBox.getValue();\r\n            if (selectedItem != null) {\r\n                if (selectedItem.equals(\"selection\")) {\r\n                    sortingActive = true;\r\n                    startSorting(\"Selection Sort\");\r\n                    Button b1=new Button(\"back\");\r\n                    b1.setStyle(\"-fx-background-color: #D3D3D3;-fx-text-fill: Black;\");\r\n\r\n                    GridPane g1=new GridPane();\r\n                    g1.getChildren().addAll(hbox);\r\n                    g1.translateXProperty().bind(scrollBar2.valueProperty().negate());\r\n                    g1.setAlignment(Pos.BOTTOM_CENTER);\r\n                    BorderPane borderPane=new BorderPane();\r\n                    borderPane.setCenter(g1);\r\n                    borderPane.setTop(b1);\r\n                    borderPane.setBottom(scrollBar2);\r\n\r\n                    g1.setOnScroll(event2 -> {\r\n                        double deltaX = event2.getDeltaX()*0.5;\r\n                        scrollBar2.setValue(scrollBar2.getValue() - deltaX);\r\n                    });\r\n\r\n                    primaryStage.setScene(scene2=new Scene(borderPane,500,400));\r\n                    primaryStage.show();\r\n                    b1.setOnAction(actionEvent -> {\r\n                        primaryStage.setScene(scene1);\r\n                        DrawGridPane(gridPane);\r\n                    });\r\n                } else if (selectedItem.equals(\"bubble\")) {\r\n                    sortingActive = true;\r\n                    startSorting(\"Bubble Sort\");\r\n                    Button b1=new Button(\"back\");\r\n                    GridPane g1=new GridPane();\r\n                    g1.getChildren().addAll(hbox);\r\n                    g1.translateXProperty().bind(scrollBar2.valueProperty().negate());\r\n                    g1.setAlignment(Pos.BOTTOM_CENTER);\r\n                    BorderPane borderPane=new BorderPane();\r\n                    borderPane.setCenter(g1);\r\n                    borderPane.setTop(b1);\r\n                    borderPane.setBottom(scrollBar2);\r\n                    g1.setOnScroll(event2 -> {\r\n                        double deltaX = event2.getDeltaX()*0.5;\r\n                        scrollBar2.setValue(scrollBar2.getValue() - deltaX);\r\n                    });\r\n                    primaryStage.setScene(scene2=new Scene(borderPane, 500,400));\r\n                    primaryStage.show();\r\n                    b1.setOnAction(actionEvent -> {\r\n                        primaryStage.setScene(scene1);\r\n                        DrawGridPane(gridPane);\r\n                    });\r\n                }\r\n                else if (selectedItem.equals(\"cycle\")) {\r\n                    sortingActive = true;\r\n                    startSorting(\"Cycle Sort\");\r\n                    Button b1=new Button(\"back\");\r\n                    GridPane g1=new GridPane();\r\n                    g1.getChildren().addAll(hbox);\r\n                    g1.translateXProperty().bind(scrollBar2.valueProperty().negate());\r\n                    g1.setAlignment(Pos.BOTTOM_CENTER);\r\n                    BorderPane borderPane=new BorderPane();\r\n                    borderPane.setCenter(g1);\r\n                    borderPane.setTop(b1);\r\n                    borderPane.setBottom(scrollBar2);\r\n\r\n                    g1.setOnScroll(event2 -> {\r\n                        double deltaX = event2.getDeltaX()*0.5;\r\n                        scrollBar2.setValue(scrollBar2.getValue() - deltaX);\r\n                    });\r\n\r\n                    primaryStage.setScene(scene3=new Scene(borderPane, 500,400));\r\n                    primaryStage.show();\r\n                    b1.setOnAction(actionEvent -> {\r\n                        primaryStage.setScene(scene1);\r\n                        DrawGridPane(gridPane);\r\n                    });\r\n                }\r\n\r\n            } else {\r\n                System.out.println(\"No sorting algorithm selected.\");\r\n            }\r\n        });\r\n\r\n        shuffleButton.setOnAction(event -> {\r\n            sortingActive = false;\r\n            shuffleStudents();\r\n            DrawGridPane(gridPane);\r\n            drawStudents();\r\n        });\r\n\r\n        // Layout configuration for buttons and combo box\r\n        HBox controlButtons = new HBox(sortingAlgorithmComboBox, sortButton, shuffleButton);\r\n        controlButtons.setAlignment(Pos.CENTER);\r\n        controlButtons.setSpacing(20);\r\n        controlButtons.setMaxSize(500, 100);\r\n        controlButtons.setMinSize(0,0);\r\n\r\n        // Create bottom layout for buttons\r\n        BorderPane bottomLayout = new BorderPane();\r\n        bottomLayout.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));\r\n        bottomLayout.setCenter(controlButtons);\r\n        bottomLayout.setPadding(new Insets(10));\r\n\r\n        // Create main BorderPane to hold grid and buttons\r\n        BorderPane root = new BorderPane();\r\n\r\n        root.setCenter(gridPane);\r\n        root.setRight(scrollBar);\r\n        root.setTop(bottomLayout);\r\n\r\n        scene1 = new Scene(root, 500, 400);\r\n        primaryStage.setScene(scene1);\r\n        primaryStage.show();\r\n\r\n    }\r\n\r\n//    private void animateBubbleSort(ArrayList<studentTracker> students) {\r\n//        Timeline timeline = new Timeline();\r\n//        boolean swapped;\r\n//        do {\r\n//            swapped = false;\r\n//            for (int i = 0; i < students.size() - 1; i++) {\r\n//                if (students.get(i).getGrade() > students.get(i + 1).getGrade()) {\r\n//                    Collections.swap(students, i, i + 1);\r\n//\r\n//                    swapped = true;\r\n//                }\r\n//            }\r\n//        } while (swapped);\r\n//        timeline.play();\r\n//    }\r\n//\r\n//\r\n//    private void animateSelectionSort(ArrayList<studentTracker> students) {\r\n//        for (int i = 0; i < students.size() - 1; i++) {\r\n//            int minIndex = i;\r\n//            int swapIndex=minIndex;\r\n//            for (int j = i + 1; j < students.size(); j++) {\r\n//                if (students.get(j).getGrade() < students.get(minIndex).getGrade()) {\r\n//                    swapIndex = j;\r\n//                } else if (students.get(j).getGrade() > students.get(minIndex).getGrade()) {\r\n//                    continue;\r\n//                }\r\n//                else\r\n//                {\r\n//                    break;\r\n//                }\r\n//            }\r\n//            if (swapIndex == minIndex){\r\n//                break;\r\n//            }\r\n//            if(minIndex!=swapIndex) {\r\n//              AnimationSelectionGrades(minIndex,swapIndex);\r\n//\r\n//\r\n//            }\r\n//        }\r\n//\r\n//\r\n//    }\r\n\r\n\r\n    public GridPane DrawGridPane (GridPane gridPane){\r\n\r\n        gridPane.setPadding(new Insets(10));\r\n        gridPane.setHgap(20);\r\n        gridPane.setVgap(10);\r\n\r\n        Label nameLabel = new Label(\"Student Name\");\r\n        Label gradeLabel = new Label(\"Grade\");\r\n        HBox h1 = new HBox();\r\n        h1.getChildren().addAll(nameLabel, gradeLabel);\r\n        nameLabel.setStyle(\"-fx-font-weight: bold;\");\r\n        gradeLabel.setStyle(\"-fx-font-weight: bold;\");\r\n        h1.setSpacing(50);\r\n        gridPane.getChildren().addAll(h1);\r\n        hBoxes = new HBox[StdNum];\r\n\r\n        for (int i = 0; i < StdNum; i++) {\r\n//            students[i].setName(\"Student\"+\"i\");\r\n//            students[i].setGrade((int) (Math.random() * StdNum));\r\n            Label studentNameLabel;\r\n            Label gradeLabelValue;\r\n            if(i<=8) {\r\n                 studentNameLabel = new Label(students[i].getName());\r\n                 gradeLabelValue = new Label(\"  \"+Integer.toString(students[i].getGrade()));\r\n            }else{\r\n                 studentNameLabel = new Label(students[i].getName());\r\n                 gradeLabelValue = new Label(Integer.toString(students[i].getGrade()));\r\n            }\r\n            HBox hBox = new HBox();\r\n            hBox.getChildren().addAll(studentNameLabel, gradeLabelValue);\r\n            hBox.setSpacing(85);\r\n            hBoxes[i] = hBox;\r\n            gridPane.add(hBox, 0, i + 1);\r\n            if (i % 2 == 0) {\r\n                hBox.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));\r\n            } else {\r\n                hBox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));\r\n            }\r\n        }\r\nreturn gridPane;\r\n    }\r\n    public void AnimationSelectionGrades(Integer minIndex,Integer swapIndex){\r\n        Timeline timeline=new Timeline(new KeyFrame(Duration.millis(1),actionEvent ->{\r\n            for (int i=0;i<students.length;i++) {\r\n                hBoxes[minIndex].setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));\r\n\r\n                HBox temp = hBoxes[minIndex];\r\n                hBoxes[minIndex] = hBoxes[swapIndex];\r\n                hBoxes[swapIndex] = temp;\r\n                hBoxes[minIndex].setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));\r\n\r\n            }\r\n\r\n        } ));\r\ntimeline.setCycleCount(students.length);\r\ntimeline.play();\r\n    }\r\n\r\n    private void drawStudents() {\r\n        hbox.getChildren().clear();\r\n        for (int i = 0; i < StdNum; i++) {\r\n            Student student = students[i];\r\n            Rectangle rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.LIGHTGREY);\r\n            Text text = new Text(\"\"+student.getGrade());\r\n            text.setFill(Color.BLACK);\r\n            StackPane stackPane = new StackPane(rectangle, text);\r\n            stackPane.setAlignment(Pos.BOTTOM_CENTER);\r\n            hbox.getChildren().add(stackPane);\r\n        }\r\n    }\r\n\r\n    private void drawStudentsComparing(int firstInd, int secondInd) {\r\n        hbox.getChildren().clear();\r\n        for (int i = 0; i < StdNum; i++) {\r\n            Student student = students[i];\r\n\r\n            Rectangle rectangle = null;\r\n            //Coloring\r\n            if(i != firstInd & i != secondInd){\r\n                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.LIGHTGREY);\r\n            } else if (i == firstInd) {\r\n                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.RED);\r\n            }else if(i == secondInd){\r\n                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.BLUE);\r\n            }\r\n\r\n\r\n\r\n            Text text = new Text(student.getName() + \" (\" + student.getGrade() + \")\");\r\n            text.setFill(Color.BLACK);\r\n            StackPane stackPane = new StackPane(rectangle, text);\r\n            stackPane.setAlignment(Pos.BOTTOM_CENTER);\r\n            hbox.getChildren().add(stackPane);\r\n        }\r\n    }\r\n\r\n    private void drawStudentsComparingJustBeforeSwapping(int firstInd, int secondInd) {\r\n        hbox.getChildren().clear();\r\n        for (int i = 0; i < StdNum; i++) {\r\n            Student student = students[i];\r\n\r\n            Rectangle rectangle;\r\n            //Coloring\r\n            if(i != firstInd & i != secondInd){\r\n                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.LIGHTGREY);\r\n            } else {\r\n                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.RED);\r\n            }\r\n\r\n\r\n\r\n            Text text = new Text(student.getName() + \" (\" + student.getGrade() + \")\");\r\n            text.setFill(Color.BLACK);\r\n            StackPane stackPane = new StackPane(rectangle, text);\r\n            stackPane.setAlignment(Pos.BOTTOM_CENTER);\r\n            hbox.getChildren().add(stackPane);\r\n        }\r\n    }\r\n\r\n\r\n    private void drawStudentsJustAfterSwapping(int firstInd, int secondInd) {\r\n        hbox.getChildren().clear();\r\n        for (int i = 0; i < StdNum; i++) {\r\n            Student student = students[i];\r\n\r\n            Rectangle rectangle;\r\n            //Coloring\r\n            if(i != firstInd & i != secondInd){\r\n                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.LIGHTGREY);\r\n            } else {\r\n                rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.GREEN);\r\n            }\r\n\r\n\r\n\r\n            Text text = new Text(student.getName() + \" (\" + student.getGrade() + \")\");\r\n            text.setFill(Color.BLACK);\r\n            StackPane stackPane = new StackPane(rectangle, text);\r\n            stackPane.setAlignment(Pos.BOTTOM_CENTER);\r\n            hbox.getChildren().add(stackPane);\r\n        }\r\n    }\r\n\r\n\r\n    private void startSorting(String sortingType) {\r\n        Timeline timeline = new Timeline(\r\n                new KeyFrame(Duration.seconds(0.5), e -> {\r\n                    if (sortingActive && step < StdNum) {\r\n                        if (sortingType.equals(\"Selection Sort\")) {\r\n                            selectionSortStep();\r\n                        } else if (sortingType.equals(\"Bubble Sort\")) {\r\n                            bubbleSortStep();\r\n                        }else if(sortingType.equals(\"Cycle Sort\")) {\r\n                            cycleSortStep();\r\n                        }\r\n                        drawStudents();\r\n                        System.out.println(step);\r\n                        step++;\r\n\r\n                    }\r\n                })\r\n        );\r\n        timeline.setCycleCount(StdNum);\r\n        timeline.play();\r\n    }\r\n\r\n    private void shuffleStudents() {\r\n        // Shuffle students array\r\n        for (int i = 0; i < StdNum; i++) {\r\n            int randomIndex = (int) (Math.random() * StdNum);\r\n            Student temp = students[i];\r\n            students[i] = students[randomIndex];\r\n            students[randomIndex] = temp;\r\n        }\r\n        step = 0;\r\n    }\r\n\r\n    private void selectionSortStep() {\r\n        int minIndex = step;\r\n        for (int i = step + 1; i < StdNum; i++) {\r\n            if (students[i].getGrade() < students[minIndex].getGrade()) {\r\n                minIndex = i;\r\n            }\r\n        }\r\n        // Swap\r\n        Student temp = students[minIndex];\r\n        students[minIndex] = students[step];\r\n        students[step] = temp;\r\n    }\r\n\r\n    private void selectionSortStepVisualization() {\r\n        counter = visualizationStep+1;\r\n        final int[] minIndex = {visualizationStep};\r\n        Timeline timeline = new Timeline(\r\n                new KeyFrame(Duration.seconds(1), e -> {\r\n\r\n                    if(counter<StdNum){\r\n                        drawStudentsComparing(visualizationStep, counter);\r\n                        if (students[counter].getGrade() < students[minIndex[0]].getGrade()) {\r\n                            minIndex[0] = counter;\r\n                        }\r\n                    }\r\n\r\n                    System.out.println(\"before adding \"+counter);\r\n                    counter++;\r\n                    System.out.println(\"after adding \"+counter);\r\n\r\n                    System.out.println(\"min Index \"+ minIndex[0]);\r\n\r\n                    if(counter > (StdNum)){\r\n\r\n                        if(counter == (StdNum+1)){\r\n                            drawStudentsComparingJustBeforeSwapping(visualizationStep, minIndex[0]);\r\n\r\n                        }\r\n\r\n                        if(counter == (StdNum+2)) {\r\n                            Student temp = students[minIndex[0]];\r\n                            students[minIndex[0]] = students[visualizationStep];\r\n                            students[visualizationStep] = temp;\r\n                            drawStudentsJustAfterSwapping(0, minIndex[0]);\r\n                        }\r\n                    }\r\n\r\n\r\n\r\n                })\r\n        );\r\n        timeline.setCycleCount(StdNum+1);\r\n        timeline.play();\r\n\r\n//        if(counter == (ARRAY_SIZE+2)) {\r\n//            visualizationStep += 1;\r\n//        }\r\n\r\n//        int minIndex = visualizationStep;\r\n//        for (int i = visualizationStep + 1; i < ARRAY_SIZE; i++) {\r\n//            if (students[i].getGrade() < students[minIndex].getGrade()) {\r\n//                minIndex = i;\r\n//            }\r\n//        }\r\n//        drawStudentsComparingJustBeforeSwapping(0,minIndex);\r\n//\r\n//        // Swap\r\n//        Student temp = students[minIndex];\r\n//        students[minIndex] = students[visualizationStep];\r\n//        students[visualizationStep] = temp;\r\n//\r\n//        drawStudentsJustAfterSwapping(0, minIndex);\r\n\r\n    }\r\n    private void bubbleSortStep() {\r\n        if (step < StdNum - 1) {\r\n            for (int j = 0; j < StdNum - step - 1; j++) {\r\n                if (students[j].getGrade() > students[j + 1].getGrade()) {\r\n                    // Swap\r\n                    Student temp = students[j];\r\n                    students[j] = students[j + 1];\r\n                    students[j + 1] = temp;\r\n                }\r\n            }\r\n        }\r\n    }\r\n    private void cycleSortStep() {\r\n        int writes = 0;\r\n\r\n        // Traverse array elements and put them in the right place\r\n        for (int cycleStart = 0; cycleStart < StdNum - 1; cycleStart++) {\r\n            int item = students[cycleStart].getGrade();\r\n            int pos = cycleStart;\r\n\r\n            // Find position where we put the element which is currently at cycleStart\r\n            for (int i = cycleStart + 1; i < StdNum; i++) {\r\n                if (students[i].getGrade() < item) {\r\n                    pos++;\r\n                }\r\n            }\r\n\r\n            // If the item is already in the correct position, skip\r\n            if (pos == cycleStart) {\r\n                continue;\r\n            }\r\n\r\n            // Skip elements that are already sorted\r\n            while (item == students[pos].getGrade()) {\r\n                pos++;\r\n            }\r\n\r\n            // Move the item to its correct position\r\n            if (pos != cycleStart) {\r\n                int temp = students[pos].getGrade();\r\n                students[pos].setGrade(item);\r\n                item = temp;\r\n                writes++;\r\n            }\r\n\r\n            // Rotate the rest of the cycle\r\n            while (pos != cycleStart) {\r\n                pos = cycleStart;\r\n                for (int i = cycleStart + 1; i < StdNum; i++) {\r\n                    if (students[i].getGrade() < item) {\r\n                        pos++;\r\n                    }\r\n                }\r\n\r\n                // Skip elements that are already sorted\r\n                while (item == students[pos].getGrade()) {\r\n                    pos++;\r\n                }\r\n\r\n                // Move the item to its correct position\r\n                if (item != students[pos].getGrade()) {\r\n                    int temp = students[pos].getGrade();\r\n                    students[pos].setGrade(item);\r\n                    item = temp;\r\n                    writes++;\r\n                }\r\n            }\r\n\r\n            // Update GUI\r\n            drawStudents();\r\n        }\r\n    }\r\n    //\r\n\r\n    private void cycleSortStepVisualization() {\r\n        counter = visualizationStep + 1;\r\n        final int[] minIndex = {visualizationStep};\r\n\r\n        Timeline timeline = new Timeline(\r\n                new KeyFrame(Duration.seconds(1), e -> {\r\n                    int writes = 0;\r\n                    int item = students[visualizationStep].getGrade();\r\n                    int pos = visualizationStep;\r\n\r\n                    // Find position where we put the element which is currently at visualizationStep\r\n                    for (int i = visualizationStep + 1; i < StdNum; i++) {\r\n                        if (students[i].getGrade() < item) {\r\n                            pos++;\r\n                        }\r\n                    }\r\n\r\n                    // If the item is already in the correct position, skip\r\n                    if (pos == visualizationStep) {\r\n                        counter++;\r\n                        return;\r\n                    }\r\n\r\n                    // Skip elements that are already sorted\r\n                    while (item == students[pos].getGrade()) {\r\n                        pos++;\r\n                    }\r\n\r\n                    // Move the item to its correct position\r\n                    if (pos != visualizationStep) {\r\n                        Student temp = students[pos];\r\n                        students[pos] = new Student(\"Default Name\", item); // Instantiate new Student with a default name\r\n                        item = temp.getGrade();\r\n                        writes++;\r\n                    }\r\n\r\n                    // Rotate the rest of the cycle\r\n                    while (pos != visualizationStep) {\r\n                        pos = visualizationStep;\r\n                        for (int i = visualizationStep + 1; i < StdNum; i++) {\r\n                            if (students[i].getGrade() < item) {\r\n                                pos++;\r\n                            }\r\n                        }\r\n\r\n                        // Skip elements that are already sorted\r\n                        while (item == students[pos].getGrade()) {\r\n                            pos++;\r\n                        }\r\n\r\n                        // Move the item to its correct position\r\n                        if (item != students[pos].getGrade()) {\r\n                            Student temp = students[pos];\r\n                            students[pos] = new Student(\"Default Name\", item); // Instantiate new Student with a default name\r\n                            item = temp.getGrade();\r\n                            writes++;\r\n                        }\r\n                    }\r\n\r\n                    // Update GUI\r\n                    drawStudents();\r\n\r\n                    System.out.println(\"before adding \" + counter);\r\n                    counter++;\r\n                    System.out.println(\"after adding \" + counter);\r\n\r\n                    System.out.println(\"min Index \" + minIndex[0]);\r\n\r\n                    // Perform visualization updates\r\n                    if (counter > StdNum) {\r\n                        if (counter == (StdNum + 1)) {\r\n                            drawStudentsComparingJustBeforeSwapping(visualizationStep, minIndex[0]);\r\n                        }\r\n\r\n                        if (counter == (StdNum + 2)) {\r\n                            Student temp = students[minIndex[0]];\r\n                            students[minIndex[0]] = students[visualizationStep];\r\n                            students[visualizationStep] = temp;\r\n                            drawStudentsJustAfterSwapping(0, minIndex[0]);\r\n                        }\r\n                    }\r\n                })\r\n        );\r\n        timeline.setCycleCount(StdNum + 1);\r\n        timeline.play();\r\n    }\r\n\r\n    }\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java b/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java
+--- a/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java	(revision 489d40c57ec2be4bebae915b1c4e3fc0018ec94d)
++++ b/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java	(date 1715196606642)
+@@ -5,10 +5,11 @@
+ import javafx.collections.FXCollections;
+ import javafx.collections.ObservableList;
+ import javafx.geometry.Insets;
+-import javafx.geometry.Orientation;
+ import javafx.geometry.Pos;
+ import javafx.scene.Scene;
+-import javafx.scene.control.*;
++import javafx.scene.control.Button;
++import javafx.scene.control.ComboBox;
++import javafx.scene.control.Label;
+ import javafx.scene.control.skin.ButtonSkin;
+ import javafx.scene.image.Image;
+ import javafx.scene.image.ImageView;
+@@ -19,7 +20,6 @@
+ import javafx.stage.Stage;
+ import javafx.util.Duration;
+ 
+-import java.nio.channels.Pipe;
+ import java.util.Random;
+ 
+ 
+@@ -27,7 +27,7 @@
+ 
+ public class StudentGradeTrackerProject extends Application {
+ 
+-    public static final int StdNum = 100;
++    public static final int StdNum = 5;
+     static Student[] students;
+     HBox[] hBoxes;
+     ObservableList<String> sortingName;
+@@ -42,11 +42,8 @@
+     private int visualizationStep = 0;
+     int counter;
+     private boolean sortingActive;
+-    private int RECTANGLE_WIDTH =10;
+-    public ScrollBar scrollBar;
+-    public ScrollBar scrollBar2;
+-
+- private static GridPane gridPane;
++    private static final int RECTANGLE_WIDTH = 75;
++ private GridPane gridPane;
+ 
+     public static void main(String[] args) {
+         launch(args);
+@@ -54,7 +51,6 @@
+ 
+     @Override
+     public void start(Stage primaryStage) {
+-
+         sortingName = FXCollections.observableArrayList("selection", "bubble","cycle");
+         students = new Student[StdNum];
+ Random random =new Random();
+@@ -64,30 +60,19 @@
+ 
+         gridPane=new GridPane();
+         DrawGridPane(gridPane);
+-        gridPane.setAlignment(Pos.CENTER);
+-        gridPane.setMaxSize(500,11*StdNum);
+-       // gridPane.setMinHeight();
++
+         hbox = new HBox();
+         hbox.setAlignment(Pos.CENTER);
+         hbox.setSpacing(10);
+         hbox.setPadding(new Insets(10));
+-        scrollBar=new ScrollBar();
+-        scrollBar.setOrientation(Orientation.VERTICAL);
+-        scrollBar.setMin(gridPane.getMinHeight());
+-        scrollBar.setMax(gridPane.getMaxHeight()*StdNum/10);
+-        scrollBar.setValue(0);
+-        scrollBar.adjustValue(gridPane.getMaxHeight());
+-        gridPane.translateYProperty().bind(scrollBar.valueProperty().negate());
+ 
+-        gridPane.setOnScroll(event -> {
+-            double deltaY = event.getDeltaY()*0.5;
+-            scrollBar.setValue(scrollBar.getValue() - deltaY);
+-        });
+-        scrollBar2=new ScrollBar();
+-        scrollBar2.setOrientation(Orientation.HORIZONTAL);
+-        scrollBar2.setMin(gridPane.getMinWidth());
+-        scrollBar2.setMax(gridPane.getMaxWidth()*StdNum/10);
+-        scrollBar2.setValue(0);
++//        animationStage=new AnimationStage();
++//        animationStage.hbox=new HBox();
++//        animationStage.hbox.setAlignment(Pos.CENTER);
++//        animationStage.hbox.setStyle("-fx-border-color: black;");
++//        animationStage.drawStudents(students);
++
++       // Collections.shuffle(List.of(students));
+ 
+         // Create buttons and combo box
+         Button sortButton = new Button("Sort");
+@@ -105,20 +90,10 @@
+                     b1.setStyle("-fx-background-color: #D3D3D3;-fx-text-fill: Black;");
+ 
+                     GridPane g1=new GridPane();
+-                    g1.getChildren().addAll(hbox);
+-                    g1.translateXProperty().bind(scrollBar2.valueProperty().negate());
++                    g1.getChildren().addAll(hbox,b1);
++
+                     g1.setAlignment(Pos.BOTTOM_CENTER);
+-                    BorderPane borderPane=new BorderPane();
+-                    borderPane.setCenter(g1);
+-                    borderPane.setTop(b1);
+-                    borderPane.setBottom(scrollBar2);
+-
+-                    g1.setOnScroll(event2 -> {
+-                        double deltaX = event2.getDeltaX()*0.5;
+-                        scrollBar2.setValue(scrollBar2.getValue() - deltaX);
+-                    });
+-
+-                    primaryStage.setScene(scene2=new Scene(borderPane,500,400));
++                    primaryStage.setScene(scene2=new Scene(g1,RECTANGLE_WIDTH*StdNum*3,400));
+                     primaryStage.show();
+                     b1.setOnAction(actionEvent -> {
+                         primaryStage.setScene(scene1);
+@@ -129,18 +104,9 @@
+                     startSorting("Bubble Sort");
+                     Button b1=new Button("back");
+                     GridPane g1=new GridPane();
+-                    g1.getChildren().addAll(hbox);
+-                    g1.translateXProperty().bind(scrollBar2.valueProperty().negate());
++                    g1.getChildren().addAll(hbox,b1);
+                     g1.setAlignment(Pos.BOTTOM_CENTER);
+-                    BorderPane borderPane=new BorderPane();
+-                    borderPane.setCenter(g1);
+-                    borderPane.setTop(b1);
+-                    borderPane.setBottom(scrollBar2);
+-                    g1.setOnScroll(event2 -> {
+-                        double deltaX = event2.getDeltaX()*0.5;
+-                        scrollBar2.setValue(scrollBar2.getValue() - deltaX);
+-                    });
+-                    primaryStage.setScene(scene2=new Scene(borderPane, 500,400));
++                    primaryStage.setScene(scene2=new Scene(g1, 500,400));
+                     primaryStage.show();
+                     b1.setOnAction(actionEvent -> {
+                         primaryStage.setScene(scene1);
+@@ -149,23 +115,12 @@
+                 }
+                 else if (selectedItem.equals("cycle")) {
+                     sortingActive = true;
+-                    startSorting("Cycle Sort");
++                    startSorting("Bubble Sort");
+                     Button b1=new Button("back");
+                     GridPane g1=new GridPane();
+-                    g1.getChildren().addAll(hbox);
+-                    g1.translateXProperty().bind(scrollBar2.valueProperty().negate());
++                    g1.getChildren().addAll(hbox,b1);
+                     g1.setAlignment(Pos.BOTTOM_CENTER);
+-                    BorderPane borderPane=new BorderPane();
+-                    borderPane.setCenter(g1);
+-                    borderPane.setTop(b1);
+-                    borderPane.setBottom(scrollBar2);
+-
+-                    g1.setOnScroll(event2 -> {
+-                        double deltaX = event2.getDeltaX()*0.5;
+-                        scrollBar2.setValue(scrollBar2.getValue() - deltaX);
+-                    });
+-
+-                    primaryStage.setScene(scene3=new Scene(borderPane, 500,400));
++                    primaryStage.setScene(scene3=new Scene(g1, 500,400));
+                     primaryStage.show();
+                     b1.setOnAction(actionEvent -> {
+                         primaryStage.setScene(scene1);
+@@ -189,21 +144,16 @@
+         HBox controlButtons = new HBox(sortingAlgorithmComboBox, sortButton, shuffleButton);
+         controlButtons.setAlignment(Pos.CENTER);
+         controlButtons.setSpacing(20);
+-        controlButtons.setMaxSize(500, 100);
+-        controlButtons.setMinSize(0,0);
+ 
+         // Create bottom layout for buttons
+         BorderPane bottomLayout = new BorderPane();
+-        bottomLayout.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));
+         bottomLayout.setCenter(controlButtons);
+         bottomLayout.setPadding(new Insets(10));
+ 
+         // Create main BorderPane to hold grid and buttons
+         BorderPane root = new BorderPane();
+-
++        root.setBottom(bottomLayout);
+         root.setCenter(gridPane);
+-        root.setRight(scrollBar);
+-        root.setTop(bottomLayout);
+ 
+         scene1 = new Scene(root, 500, 400);
+         primaryStage.setScene(scene1);
+@@ -276,15 +226,8 @@
+         for (int i = 0; i < StdNum; i++) {
+ //            students[i].setName("Student"+"i");
+ //            students[i].setGrade((int) (Math.random() * StdNum));
+-            Label studentNameLabel;
+-            Label gradeLabelValue;
+-            if(i<=8) {
+-                 studentNameLabel = new Label(students[i].getName());
+-                 gradeLabelValue = new Label("  "+Integer.toString(students[i].getGrade()));
+-            }else{
+-                 studentNameLabel = new Label(students[i].getName());
+-                 gradeLabelValue = new Label(Integer.toString(students[i].getGrade()));
+-            }
++            Label studentNameLabel = new Label(students[i].getName());
++            Label gradeLabelValue = new Label(Integer.toString(students[i].getGrade()));
+             HBox hBox = new HBox();
+             hBox.getChildren().addAll(studentNameLabel, gradeLabelValue);
+             hBox.setSpacing(85);
+@@ -320,7 +263,7 @@
+         for (int i = 0; i < StdNum; i++) {
+             Student student = students[i];
+             Rectangle rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.LIGHTGREY);
+-            Text text = new Text(""+student.getGrade());
++            Text text = new Text(student.getName() + " (" + student.getGrade() + ")");
+             text.setFill(Color.BLACK);
+             StackPane stackPane = new StackPane(rectangle, text);
+             stackPane.setAlignment(Pos.BOTTOM_CENTER);
+@@ -669,6 +612,4 @@
+         timeline.play();
+     }
+ 
+-    }
+-
+-
++}
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"44467efd-aa85-4cd1-86d0-790f797d3aff\" name=\"Changes\" comment=\"approximately final one\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_21_2024_1_54_PM_[Changes]/shelved.patch\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_21_2024_1_54_PM__Changes_.xml\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_22_2024_7_08_PM_[Changes]/shelved.patch\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_22_2024_7_08_PM__Changes_.xml\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_24_2024_6_08_PM_[Changes]/shelved.patch\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_24_2024_6_08_PM__Changes_.xml\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_24_2024_8_03_PM_[Changes]/shelved.patch\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_24_2024_8_03_PM__Changes_.xml\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_25_2024_6_16_PM_[Changes]/shelved.patch\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_25_2024_6_16_PM__Changes_.xml\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_26_2024_10_30_PM_[Changes]/shelved.patch\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_26_2024_10_30_PM__Changes_.xml\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\">{\r\n  &quot;lastFilter&quot;: {\r\n    &quot;state&quot;: &quot;OPEN&quot;,\r\n    &quot;assignee&quot;: &quot;maryam22001&quot;\r\n  }\r\n}</component>\r\n  <component name=\"GithubPullRequestsUISettings\">\r\n    <option name=\"selectedUrlAndAccountId\">\r\n      <UrlAndAccount>\r\n        <option name=\"accountId\" value=\"37e496e0-802c-43da-ab92-aeadfc514611\" />\r\n        <option name=\"url\" value=\"https://github.com/anton-onsy/Algorithm_Jfx.git\" />\r\n      </UrlAndAccount>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProblemsViewState\">\r\n    <option name=\"selectedTabId\" value=\"CurrentFile\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 1\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2emlBL7pLMOVOPrGbRhxaHbpkeT\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;Application.AnimationTest.executor&quot;: &quot;Run&quot;,\r\n    &quot;Application.StudentGradeTrackerProject.executor&quot;: &quot;Run&quot;,\r\n    &quot;Application.Test.executor&quot;: &quot;Run&quot;,\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\r\n    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;master&quot;,\r\n    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,\r\n    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/20109/IdeaProjects/Algorithm_Jfx&quot;,\r\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\r\n    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,\r\n    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,\r\n    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,\r\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\r\n  }\r\n}</component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"jdk-20.0.2-corretto-20.0.2.1-3183f394aec4-907a2361\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"44467efd-aa85-4cd1-86d0-790f797d3aff\" name=\"Changes\" comment=\"\" />\r\n      <created>1712517499532</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1712517499532</updated>\r\n      <workItem from=\"1713485617503\" duration=\"12141000\" />\r\n      <workItem from=\"1713715731502\" duration=\"5367000\" />\r\n      <workItem from=\"1713902345387\" duration=\"4593000\" />\r\n      <workItem from=\"1713970126809\" duration=\"3654000\" />\r\n      <workItem from=\"1713973784996\" duration=\"741000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"first visualization\">\r\n      <created>1713122013284</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1713122013284</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"first visualization\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1713505137751</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1713505137753</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"first visualization\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1713546117004</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1713546117004</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"approximately final one\">\r\n      <created>1714061464105</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1714061464105</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"5\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"first visualization\" />\r\n    <MESSAGE value=\"approximately final one\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"approximately final one\" />\r\n  </component>\r\n  <component name=\"XDebuggerManager\">\r\n    <breakpoint-manager>\r\n      <breakpoints>\r\n        <breakpoint enabled=\"true\" type=\"java-exception\">\r\n          <properties class=\"java.lang.UnsupportedOperationException\" package=\"java.lang\" />\r\n          <option name=\"timeStamp\" value=\"1\" />\r\n        </breakpoint>\r\n      </breakpoints>\r\n    </breakpoint-manager>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 489d40c57ec2be4bebae915b1c4e3fc0018ec94d)
++++ b/.idea/workspace.xml	(date 1715209657599)
+@@ -4,19 +4,9 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="44467efd-aa85-4cd1-86d0-790f797d3aff" name="Changes" comment="approximately final one">
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_21_2024_1_54_PM_[Changes]/shelved.patch" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_21_2024_1_54_PM__Changes_.xml" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_22_2024_7_08_PM_[Changes]/shelved.patch" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_22_2024_7_08_PM__Changes_.xml" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_24_2024_6_08_PM_[Changes]/shelved.patch" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_24_2024_6_08_PM__Changes_.xml" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_24_2024_8_03_PM_[Changes]/shelved.patch" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_24_2024_8_03_PM__Changes_.xml" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_25_2024_6_16_PM_[Changes]/shelved.patch" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_25_2024_6_16_PM__Changes_.xml" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_26_2024_10_30_PM_[Changes]/shelved.patch" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_26_2024_10_30_PM__Changes_.xml" beforeDir="false" />
++    <list default="true" id="44467efd-aa85-4cd1-86d0-790f797d3aff" name="Changes" comment="first visualization">
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_15_2024_7_56_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_4_15_2024_7_56_PM__Changes_.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_5_7_2024_9_17_PM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_5_7_2024_9_17_PM__Changes_.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/algorithm_jfx/StudentGradeTrackerProject.java" afterDir="false" />
+     </list>
+@@ -44,13 +34,13 @@
+   <component name="GithubPullRequestsUISettings">
+     <option name="selectedUrlAndAccountId">
+       <UrlAndAccount>
+-        <option name="accountId" value="37e496e0-802c-43da-ab92-aeadfc514611" />
++        <option name="accountId" value="fa70ea20-65a9-4913-a5a7-faab234a707a" />
+         <option name="url" value="https://github.com/anton-onsy/Algorithm_Jfx.git" />
+       </UrlAndAccount>
+     </option>
+   </component>
+   <component name="ProblemsViewState">
+-    <option name="selectedTabId" value="CurrentFile" />
++    <option name="selectedTabId" value="ProjectErrors" />
+   </component>
+   <component name="ProjectColorInfo">{
+   &quot;associatedIndex&quot;: 1
+@@ -105,6 +95,13 @@
+       <workItem from="1713902345387" duration="4593000" />
+       <workItem from="1713970126809" duration="3654000" />
+       <workItem from="1713973784996" duration="741000" />
++      <workItem from="1713988068311" duration="3225000" />
++      <workItem from="1714066239617" duration="8000" />
++      <workItem from="1714159797732" duration="55000" />
++      <workItem from="1714293309271" duration="7437000" />
++      <workItem from="1714301056825" duration="1577000" />
++      <workItem from="1715205353722" duration="67000" />
++      <workItem from="1715209609431" duration="49000" />
+     </task>
+     <task id="LOCAL-00001" summary="first visualization">
+       <created>1713122013284</created>
+@@ -129,14 +126,31 @@
+       <option name="project" value="LOCAL" />
+       <updated>1713546117004</updated>
+     </task>
+-    <task id="LOCAL-00004" summary="approximately final one">
+-      <created>1714061464105</created>
++    <task id="LOCAL-00004" summary="first visualization">
++      <option name="closed" value="true" />
++      <created>1713981987592</created>
+       <option name="number" value="00004" />
+       <option name="presentableId" value="LOCAL-00004" />
+       <option name="project" value="LOCAL" />
+-      <updated>1714061464105</updated>
++      <updated>1713981987592</updated>
++    </task>
++    <task id="LOCAL-00005" summary="first visualization">
++      <option name="closed" value="true" />
++      <created>1714300628577</created>
++      <option name="number" value="00005" />
++      <option name="presentableId" value="LOCAL-00005" />
++      <option name="project" value="LOCAL" />
++      <updated>1714300628577</updated>
+     </task>
+-    <option name="localTasksCounter" value="5" />
++    <task id="LOCAL-00006" summary="first visualization">
++      <option name="closed" value="true" />
++      <created>1714302165015</created>
++      <option name="number" value="00006" />
++      <option name="presentableId" value="LOCAL-00006" />
++      <option name="project" value="LOCAL" />
++      <updated>1714302165015</updated>
++    </task>
++    <option name="localTasksCounter" value="7" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -155,8 +169,7 @@
+   </component>
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="first visualization" />
+-    <MESSAGE value="approximately final one" />
+-    <option name="LAST_COMMIT_MESSAGE" value="approximately final one" />
++    <option name="LAST_COMMIT_MESSAGE" value="first visualization" />
+   </component>
+   <component name="XDebuggerManager">
+     <breakpoint-manager>

@@ -10,6 +10,10 @@ public class Student {
         this.grade = grade;
     }
 
+    public Student(int i) {
+        this.grade = i;
+    }
+
     // Getter for name
     public String getName() {
         return name;

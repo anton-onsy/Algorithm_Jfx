@@ -22,14 +22,12 @@ import javafx.util.Duration;
 import java.nio.channels.Pipe;
 import java.util.Random;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
+
 
 
 public class StudentGradeTrackerProject extends Application {
 
-    public static final int StdNum = 10;
+    public static final int StdNum = 50;
     static Student[] students;
     HBox[] hBoxes;
     ObservableList<String> sortingName;
@@ -41,8 +39,13 @@ public class StudentGradeTrackerProject extends Application {
     private static final int MAX_GRADE = 100;
     private HBox hbox;
     private int step;
+    private int countStep = StdNum - 1;
     private int visualizationStep = 0;
     int counter;
+    int[] inputArray = new int[StdNum];
+    int[] countArray;
+    int[] outputArray  = new int[StdNum];
+    int sortedIndex = -1;
     private boolean sortingActive;
     private int RECTANGLE_WIDTH =10;
     public ScrollBar scrollBar;
@@ -57,12 +60,36 @@ public class StudentGradeTrackerProject extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        sortingName = FXCollections.observableArrayList("selection", "bubble","heap");
+        sortingName = FXCollections.observableArrayList("selection", "bubble", "cycle", "count");
         students = new Student[StdNum];
-Random random =new Random();
+        Random random =new Random();
         for (int i = 0; i < StdNum; i++) {
             students[i] = new Student("Student"+ (i+1) ,(int)(Math.random() * MAX_GRADE));
         }
+        //Initializing countSort
+            //input array initialization
+            for (int i = 0; i < StdNum; i++) {
+                inputArray[i] = students[i].getGrade();
+            }
+            // Find the maximum grade in the students array
+            int maxGrade = Integer.MIN_VALUE;
+            for (Student student : students) {
+                if (student.getGrade() > maxGrade) {
+                    maxGrade = student.getGrade();
+                }
+            }
+
+            // Initialize count array
+            countArray = new int[maxGrade + 1];
+            // Count occurrences of each grade
+            for (Student student : students) {
+                countArray[student.getGrade()]++;
+            }
+
+            // Modify count array to contain actual position of each grade in output array
+            for (int i = 1; i < countArray.length; i++) {
+                countArray[i] += countArray[i - 1];
+            }
 
         gridPane=new GridPane();
         DrawGridPane(gridPane);
@@ -120,10 +147,16 @@ Random random =new Random();
                         scrollBar2.setValue(scrollBar2.getValue() - deltaX);
                     });
 
-                    primaryStage.setScene(scene2=new Scene(borderPane,500,400));
+                    primaryStage.setScene(scene2=new Scene(borderPane,1500,400));
+                    double centerX = (1920 - primaryStage.getWidth()) / 2;
+                    double centerY = (1080 - primaryStage.getHeight()) / 2;
+                    primaryStage.setX(centerX);
+                    primaryStage.setY(centerY);
                     primaryStage.show();
                     b1.setOnAction(actionEvent -> {
                         primaryStage.setScene(scene1);
+                        primaryStage.setX(centerX+500);
+                        primaryStage.setY(centerY-250);
                         DrawGridPane(gridPane);
                     });
                 } else if (selectedItem.equals("bubble")) {
@@ -142,16 +175,22 @@ Random random =new Random();
                         double deltaX = event2.getDeltaX()*0.5;
                         scrollBar2.setValue(scrollBar2.getValue() - deltaX);
                     });
-                    primaryStage.setScene(scene2=new Scene(borderPane, 500,400));
+                    primaryStage.setScene(scene2=new Scene(borderPane,1500,400));
+                    double centerX = (1920 - primaryStage.getWidth()) / 2;
+                    double centerY = (1080 - primaryStage.getHeight()) / 2;
+                    primaryStage.setX(centerX);
+                    primaryStage.setY(centerY);
                     primaryStage.show();
                     b1.setOnAction(actionEvent -> {
                         primaryStage.setScene(scene1);
+                        primaryStage.setX(centerX+500);
+                        primaryStage.setY(centerY-250);
                         DrawGridPane(gridPane);
                     });
                 }
-                else if (selectedItem.equals("heap")) {
+                else if (selectedItem.equals("cycle")) {
                     sortingActive = true;
-                    startSorting("Heap Sort");
+                    startSorting("Cycle Sort");
                     Button b1=new Button("back");
                     GridPane g1=new GridPane();
                     g1.getChildren().addAll(hbox);
@@ -167,10 +206,47 @@ Random random =new Random();
                         scrollBar2.setValue(scrollBar2.getValue() - deltaX);
                     });
 
-                    primaryStage.setScene(scene3=new Scene(borderPane, 500,400));
+                    primaryStage.setScene(scene2=new Scene(borderPane,1500,400));
+                    double centerX = (1920 - primaryStage.getWidth()) / 2;
+                    double centerY = (1080 - primaryStage.getHeight()) / 2;
+                    primaryStage.setX(centerX);
+                    primaryStage.setY(centerY);
                     primaryStage.show();
                     b1.setOnAction(actionEvent -> {
                         primaryStage.setScene(scene1);
+                        primaryStage.setX(centerX+500);
+                        primaryStage.setY(centerY-250);
+                        DrawGridPane(gridPane);
+                    });
+                }
+                else if (selectedItem.equals("count")) {
+                    sortingActive = true;
+                    startSorting("Count Sort");
+                    Button b1=new Button("back");
+                    GridPane g1=new GridPane();
+                    g1.getChildren().addAll(hbox);
+                    g1.translateXProperty().bind(scrollBar2.valueProperty().negate());
+                    g1.setAlignment(Pos.BOTTOM_CENTER);
+                    BorderPane borderPane=new BorderPane();
+                    borderPane.setCenter(g1);
+                    borderPane.setTop(b1);
+                    borderPane.setBottom(scrollBar2);
+
+                    g1.setOnScroll(event2 -> {
+                        double deltaX = event2.getDeltaX()*0.5;
+                        scrollBar2.setValue(scrollBar2.getValue() - deltaX);
+                    });
+
+                    primaryStage.setScene(scene2=new Scene(borderPane,1500,400));
+                    double centerX = (1920 - primaryStage.getWidth()) / 2;
+                    double centerY = (1080 - primaryStage.getHeight()) / 2;
+                    primaryStage.setX(centerX);
+                    primaryStage.setY(centerY);
+                    primaryStage.show();
+                    b1.setOnAction(actionEvent -> {
+                        primaryStage.setScene(scene1);
+                        primaryStage.setX(centerX+500);
+                        primaryStage.setY(centerY-250);
                         DrawGridPane(gridPane);
                     });
                 }
@@ -207,7 +283,7 @@ Random random =new Random();
         root.setRight(scrollBar);
         root.setTop(bottomLayout);
 
-        scene1 = new Scene(root, 500, 400);
+        scene1 = new Scene(root, 500, 800);
         primaryStage.setScene(scene1);
         primaryStage.show();
 
@@ -259,7 +335,7 @@ Random random =new Random();
 //    }
 
 
-    public GridPane DrawGridPane (GridPane gridPane){
+    public GridPane DrawGridPane(GridPane gridPane){
 
         gridPane.setPadding(new Insets(10));
         gridPane.setHgap(20);
@@ -313,8 +389,8 @@ return gridPane;
             }
 
         } ));
-timeline.setCycleCount(students.length);
-timeline.play();
+        timeline.setCycleCount(students.length);
+        timeline.play();
     }
 
     private void drawStudents() {
@@ -405,18 +481,22 @@ timeline.play();
 
     private void startSorting(String sortingType) {
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(0.5), e -> {
+                new KeyFrame(Duration.seconds(0.1), e -> {
                     if (sortingActive && step < StdNum) {
                         if (sortingType.equals("Selection Sort")) {
                             selectionSortStep();
                         } else if (sortingType.equals("Bubble Sort")) {
                             bubbleSortStep();
-                        }else if(sortingType.equals("Heap Sort")) {
-                            heapSortStep() ;
+                        }else if(sortingType.equals("Cycle Sort")) {
+                            cycleSortStep();
+                        }else if(sortingType.equals("Count Sort")) {
+                            countSortStep();
                         }
                         drawStudents();
-                        System.out.println(step);
+                        System.out.println("step" + step);
+                        System.out.println("count step" + countStep);
                         step++;
+                        countStep--;
 
                     }
                 })
@@ -433,7 +513,12 @@ timeline.play();
             students[i] = students[randomIndex];
             students[randomIndex] = temp;
         }
+        for (int i = 0; i < StdNum; i++) {
+            inputArray[i] = students[i].getGrade();
+        }
         step = 0;
+        countStep = StdNum - 1;
+        sortedIndex = -1;
     }
 
     private void selectionSortStep() {
@@ -489,27 +574,8 @@ timeline.play();
         );
         timeline.setCycleCount(StdNum+1);
         timeline.play();
-
-//        if(counter == (ARRAY_SIZE+2)) {
-//            visualizationStep += 1;
-//        }
-
-//        int minIndex = visualizationStep;
-//        for (int i = visualizationStep + 1; i < ARRAY_SIZE; i++) {
-//            if (students[i].getGrade() < students[minIndex].getGrade()) {
-//                minIndex = i;
-//            }
-//        }
-//        drawStudentsComparingJustBeforeSwapping(0,minIndex);
-//
-//        // Swap
-//        Student temp = students[minIndex];
-//        students[minIndex] = students[visualizationStep];
-//        students[visualizationStep] = temp;
-//
-//        drawStudentsJustAfterSwapping(0, minIndex);
-
     }
+
     private void bubbleSortStep() {
         if (step < StdNum - 1) {
             for (int j = 0; j < StdNum - step - 1; j++) {
@@ -522,8 +588,7 @@ timeline.play();
             }
         }
     }
-    /*
-  private void cycleSortStep() {
+    private void cycleSortStep() {
         int writes = 0;
 
         // Traverse array elements and put them in the right place
@@ -584,26 +649,50 @@ timeline.play();
         }
     }
     //
+
     private void cycleSortStepVisualization() {
-        counter = 0; // Initialize the counter
+        counter = visualizationStep + 1;
+        final int[] minIndex = {visualizationStep};
 
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.seconds(1), e -> {
-                    if (counter < StdNum - 1) {
-                        int item = students[counter].getGrade();
-                        int pos = counter;
+                    int writes = 0;
+                    int item = students[visualizationStep].getGrade();
+                    int pos = visualizationStep;
 
-                        // Find position to put the element
-                        for (int i = counter + 1; i < StdNum; i++) {
+                    // Find position where we put the element which is currently at visualizationStep
+                    for (int i = visualizationStep + 1; i < StdNum; i++) {
+                        if (students[i].getGrade() < item) {
+                            pos++;
+                        }
+                    }
+
+                    // If the item is already in the correct position, skip
+                    if (pos == visualizationStep) {
+                        counter++;
+                        return;
+                    }
+
+                    // Skip elements that are already sorted
+                    while (item == students[pos].getGrade()) {
+                        pos++;
+                    }
+
+                    // Move the item to its correct position
+                    if (pos != visualizationStep) {
+                        Student temp = students[pos];
+                        students[pos] = new Student("Default Name", item); // Instantiate new Student with a default name
+                        item = temp.getGrade();
+                        writes++;
+                    }
+
+                    // Rotate the rest of the cycle
+                    while (pos != visualizationStep) {
+                        pos = visualizationStep;
+                        for (int i = visualizationStep + 1; i < StdNum; i++) {
                             if (students[i].getGrade() < item) {
                                 pos++;
                             }
-                        }
-
-                        // If the item is already in the correct position, skip
-                        if (pos == counter) {
-                            counter++;
-                            return;
                         }
 
                         // Skip elements that are already sorted
@@ -612,77 +701,55 @@ timeline.play();
                         }
 
                         // Move the item to its correct position
-                        if (pos != counter) {
+                        if (item != students[pos].getGrade()) {
                             Student temp = students[pos];
-                            students[pos] = students[counter];
-                            students[counter] = temp;
-                            // Visualize comparison and swapping
-                            drawStudentsComparingJustBeforeSwapping(counter, pos);
-                            drawStudentsJustAfterSwapping(counter, pos);
+                            students[pos] = new Student("Default Name", item); // Instantiate new Student with a default name
+                            item = temp.getGrade();
+                            writes++;
                         }
                     }
 
+                    // Update GUI
+                    drawStudents();
+
+                    System.out.println("before adding " + counter);
                     counter++;
-                })
-        );
-        timeline.setCycleCount(StdNum - 1); // We don't need to visualize the last step
-        timeline.play();
-    }
+                    System.out.println("after adding " + counter);
 
-*/
-    private void heapSortStep() {
-        int minIndex = step;
-        int left = 2 * step + 1;
-        int right = 2 * step + 2;
+                    System.out.println("min Index " + minIndex[0]);
 
-        if (left < StdNum && students[left].getGrade() > students[minIndex].getGrade()) {
-            minIndex = left;
-        }
-
-        if (right < StdNum && students[right].getGrade() > students[minIndex].getGrade()) {
-            minIndex = right;
-        }
-
-        // Swap
-        if (minIndex != step) {
-            Student temp = students[minIndex];
-            students[minIndex] = students[step];
-            students[step] = temp;
-            drawStudentsJustAfterSwapping(step, minIndex);
-        }
-    }
-
-    private void heapSortStepVisualization() {
-       int[] currentIndex = {visualizationStep};
-      int[] minIndex = {currentIndex[0]};
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1), e -> {
-                    if (currentIndex[0] < StdNum / 2) {
-                        drawStudentsComparing(currentIndex[0], 2 * currentIndex[0] + 1);
-                        drawStudentsComparing(currentIndex[0], 2 * currentIndex[0] + 2);
-                        if (2 * currentIndex[0] + 1 < StdNum && students[2 * currentIndex[0] + 1].getGrade() > students[minIndex[0]].getGrade()) {
-                            minIndex[0] = 2 * currentIndex[0] + 1;
-                        }
-                        if (2 * currentIndex[0] + 2 < StdNum && students[2 * currentIndex[0] + 2].getGrade() > students[minIndex[0]].getGrade()) {
-                            minIndex[0] = 2 * currentIndex[0] + 2;
-                        }
-                        currentIndex[0]++;
-                    } else {
-                        if (currentIndex[0] == StdNum / 2 + 1) {
+                    // Perform visualization updates
+                    if (counter > StdNum) {
+                        if (counter == (StdNum + 1)) {
                             drawStudentsComparingJustBeforeSwapping(visualizationStep, minIndex[0]);
                         }
-                        if (currentIndex[0] == StdNum / 2 + 2) {
-                            heapSortStep();
-                            drawStudentsJustAfterSwapping(visualizationStep, minIndex[0]);
+
+                        if (counter == (StdNum + 2)) {
+                            Student temp = students[minIndex[0]];
+                            students[minIndex[0]] = students[visualizationStep];
+                            students[visualizationStep] = temp;
+                            drawStudentsJustAfterSwapping(0, minIndex[0]);
                         }
                     }
                 })
         );
-        timeline.setCycleCount(StdNum / 2 + 2);
+        timeline.setCycleCount(StdNum + 1);
         timeline.play();
+    }
+
+    private void countSortStep() {
+
+        // Fill output array with sorted grades
+        outputArray[countArray[inputArray[countStep]] - 1] = inputArray[countStep];
+        sortedIndex = countArray[inputArray[countStep]] - 1;
+        countArray[inputArray[countStep]]--;
+
+
+        Student temp = new Student("Student"+sortedIndex, inputArray[countStep]);
+        students[sortedIndex] = temp;
+
     }
 
 }
-//
 
 
