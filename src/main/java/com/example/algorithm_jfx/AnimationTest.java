@@ -28,6 +28,7 @@ public class AnimationTest extends Application {
     private int visualizationStep = 0;
     private int sortedElemAmount = 0;
     int counter;
+    int frameCounter;
     private boolean sortingActive;
 
     public static void main(String[] args) {
@@ -52,9 +53,10 @@ public class AnimationTest extends Application {
         Button selectionSortButton = new Button("Selection Sort");
         Button selectionSortVisualizationButton = new Button("Selection Sort Visualization");
         Button bubbleSortButton = new Button("Bubble Sort");
+        Button bubbleSortVisualizationButton = new Button("Bubble Sort Visualization");
         Button shuffleButton = new Button("Shuffle");
 
-        HBox bottomBox = new HBox(10, selectionSortButton, selectionSortVisualizationButton, bubbleSortButton, shuffleButton);
+        HBox bottomBox = new HBox(10, selectionSortButton, selectionSortVisualizationButton, bubbleSortButton, bubbleSortVisualizationButton, shuffleButton);
         bottomBox.setAlignment(Pos.CENTER);
         bottomBox.setPadding(new Insets(10));
 
@@ -77,6 +79,10 @@ public class AnimationTest extends Application {
         bubbleSortButton.setOnAction(e -> {
             sortingActive = true;
             startSorting("Bubble Sort");
+        });
+
+        bubbleSortVisualizationButton.setOnAction(e -> {
+            bubbleSortStepVisualization();
         });
 
         shuffleButton.setOnAction(e -> {
@@ -136,7 +142,7 @@ public class AnimationTest extends Application {
 
             Rectangle rectangle;
             //Coloring
-            if(sortedElemAmount-i>0){
+            if(sortedElemAmount - i > 0){
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.GREEN);
             }
             else if(i != firstInd & i != secondInd){
@@ -163,7 +169,7 @@ public class AnimationTest extends Application {
 
             Rectangle rectangle;
             //Coloring
-            if(sortedElemAmount-i>0){
+            if(sortedElemAmount - i > 0){
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.GREEN);
             }
             else if(i == firstInd) {
@@ -278,29 +284,10 @@ public class AnimationTest extends Application {
                 })
         );
 
-        timeline.setCycleCount(ARRAY_SIZE+1-visualizationStep);
+        timeline.setCycleCount(ARRAY_SIZE + 1 - visualizationStep);
         timeline.play();
-
-//        if(counter == (ARRAY_SIZE+2)) {
-//            visualizationStep += 1;
-//        }
-
-//        int minIndex = visualizationStep;
-//        for (int i = visualizationStep + 1; i < ARRAY_SIZE; i++) {
-//            if (students[i].getGrade() < students[minIndex].getGrade()) {
-//                minIndex = i;
-//            }
-//        }
-//        drawStudentsComparingJustBeforeSwapping(0,minIndex);
-//
-//        // Swap
-//        Student temp = students[minIndex];
-//        students[minIndex] = students[visualizationStep];
-//        students[visualizationStep] = temp;
-//
-//        drawStudentsJustAfterSwapping(0, minIndex);
-
     }
+
     private void bubbleSortStep() {
         if (step < ARRAY_SIZE - 1) {
             for (int j = 0; j < ARRAY_SIZE - step - 1; j++) {
@@ -312,5 +299,61 @@ public class AnimationTest extends Application {
                 }
             }
         }
+    }
+
+    private void bubbleSortStepVisualization() {
+        System.out.println("bubble sort visualization");
+
+        counter = visualizationStep - 1;
+        frameCounter = 0;
+        final boolean[] swapping = {false};
+        boolean[] swapped = {false};
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(.5), e -> {
+                    if(frameCounter == 0){
+                        counter++;
+                    }
+                    System.out.println("counter after adding "+counter);
+
+                    if(counter < ARRAY_SIZE & frameCounter == 0){
+                        drawStudentsComparing(counter + 1, counter);
+                    }
+
+                    if(frameCounter != 0){
+
+                        if(frameCounter == 1){
+                            drawStudentsComparingJustBeforeSwapping(counter + 1, counter);
+                        }
+
+                        if(frameCounter == 2) {
+                            Student temp = students[counter];
+                            students[counter] = students[counter + 1];
+                            students[counter + 1] = temp;
+                            drawStudentsJustAfterSwapping(counter + 1, counter);
+                        }
+                    }
+
+                    System.out.println("Frame counter = "+frameCounter);
+
+                    for(int i = 0; i < 1; i++){
+                        if ((students[counter].getGrade() > students[counter + 1].getGrade()) & frameCounter == 0) {
+                            frameCounter++;
+                            break;
+                        }
+
+                        if(frameCounter == 1){
+                            frameCounter++;
+                            break;
+                        }
+
+                        if(frameCounter == 2){
+                            frameCounter = 0;
+                        }
+                    }
+                })
+        );
+        timeline.setCycleCount(ARRAY_SIZE * 3);
+        timeline.play();
     }
 }
