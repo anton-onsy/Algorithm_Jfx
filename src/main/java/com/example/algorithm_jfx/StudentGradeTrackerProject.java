@@ -9,17 +9,12 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.skin.ButtonSkin;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import java.nio.channels.Pipe;
 import java.util.Random;
 
 
@@ -27,12 +22,11 @@ import java.util.Random;
 
 public class StudentGradeTrackerProject extends Application {
 
-    public static final int StdNum = 50;
+    public static final int StdNum = 100;
     static Student[] students;
     HBox[] hBoxes;
     ObservableList<String> sortingName;
     ComboBox<String> sortingAlgorithmComboBox;
-    public AnimationStage animationStage;
     Scene scene1;
     Scene scene2;
     Scene scene3;
@@ -50,6 +44,9 @@ public class StudentGradeTrackerProject extends Application {
     private int RECTANGLE_WIDTH =10;
     public ScrollBar scrollBar;
     public ScrollBar scrollBar2;
+    long startTime;
+    long endTime;
+    long executionTime;
 
  private static GridPane gridPane;
 
@@ -128,9 +125,15 @@ public class StudentGradeTrackerProject extends Application {
             String selectedItem = sortingAlgorithmComboBox.getValue();
             if (selectedItem != null) {
                 if (selectedItem.equals("selection")) {
+                    startTime = System.currentTimeMillis();
+
                     sortingActive = true;
                     startSorting("Selection Sort");
+
+
                     Button b1=new Button("back");
+                    Button b2=new Button("selectionVisualization");
+                    HBox hVis=new HBox(b1,b2);
                     b1.setStyle("-fx-background-color: #D3D3D3;-fx-text-fill: Black;");
 
                     GridPane g1=new GridPane();
@@ -139,7 +142,7 @@ public class StudentGradeTrackerProject extends Application {
                     g1.setAlignment(Pos.BOTTOM_CENTER);
                     BorderPane borderPane=new BorderPane();
                     borderPane.setCenter(g1);
-                    borderPane.setTop(b1);
+                    borderPane.setTop(hVis);
                     borderPane.setBottom(scrollBar2);
 
                     g1.setOnScroll(event2 -> {
@@ -153,15 +156,27 @@ public class StudentGradeTrackerProject extends Application {
                     primaryStage.setX(centerX);
                     primaryStage.setY(centerY);
                     primaryStage.show();
+
+
+
                     b1.setOnAction(actionEvent -> {
                         primaryStage.setScene(scene1);
                         primaryStage.setX(centerX+500);
                         primaryStage.setY(centerY-250);
                         DrawGridPane(gridPane);
                     });
+                    b2.setOnAction(actionEvent -> {
+                        sortingActive = false;
+                        shuffleStudents();
+                        DrawGridPane(gridPane);
+                        drawStudents();
+                        selectionSortStepVisualization();
+                    });
                 } else if (selectedItem.equals("bubble")) {
+                     startTime = System.currentTimeMillis();
                     sortingActive = true;
                     startSorting("Bubble Sort");
+
                     Button b1=new Button("back");
                     GridPane g1=new GridPane();
                     g1.getChildren().addAll(hbox);
@@ -220,8 +235,10 @@ public class StudentGradeTrackerProject extends Application {
                     });
                 }
                 else if (selectedItem.equals("count")) {
+                    startTime = System.currentTimeMillis();
                     sortingActive = true;
                     startSorting("Count Sort");
+
                     Button b1=new Button("back");
                     GridPane g1=new GridPane();
                     g1.getChildren().addAll(hbox);
@@ -251,7 +268,7 @@ public class StudentGradeTrackerProject extends Application {
                     });
                 }
 
-            } else {
+            }else {
                 System.out.println("No sorting algorithm selected.");
             }
         });
@@ -288,52 +305,6 @@ public class StudentGradeTrackerProject extends Application {
         primaryStage.show();
 
     }
-
-//    private void animateBubbleSort(ArrayList<studentTracker> students) {
-//        Timeline timeline = new Timeline();
-//        boolean swapped;
-//        do {
-//            swapped = false;
-//            for (int i = 0; i < students.size() - 1; i++) {
-//                if (students.get(i).getGrade() > students.get(i + 1).getGrade()) {
-//                    Collections.swap(students, i, i + 1);
-//
-//                    swapped = true;
-//                }
-//            }
-//        } while (swapped);
-//        timeline.play();
-//    }
-//
-//
-//    private void animateSelectionSort(ArrayList<studentTracker> students) {
-//        for (int i = 0; i < students.size() - 1; i++) {
-//            int minIndex = i;
-//            int swapIndex=minIndex;
-//            for (int j = i + 1; j < students.size(); j++) {
-//                if (students.get(j).getGrade() < students.get(minIndex).getGrade()) {
-//                    swapIndex = j;
-//                } else if (students.get(j).getGrade() > students.get(minIndex).getGrade()) {
-//                    continue;
-//                }
-//                else
-//                {
-//                    break;
-//                }
-//            }
-//            if (swapIndex == minIndex){
-//                break;
-//            }
-//            if(minIndex!=swapIndex) {
-//              AnimationSelectionGrades(minIndex,swapIndex);
-//
-//
-//            }
-//        }
-//
-//
-//    }
-
 
     public GridPane DrawGridPane(GridPane gridPane){
 
@@ -423,7 +394,7 @@ return gridPane;
 
 
 
-            Text text = new Text(student.getName() + " (" + student.getGrade() + ")");
+            Text text = new Text("" + student.getGrade());
             text.setFill(Color.BLACK);
             StackPane stackPane = new StackPane(rectangle, text);
             stackPane.setAlignment(Pos.BOTTOM_CENTER);
@@ -446,7 +417,7 @@ return gridPane;
 
 
 
-            Text text = new Text(student.getName() + " (" + student.getGrade() + ")");
+            Text text = new Text(""+student.getGrade());
             text.setFill(Color.BLACK);
             StackPane stackPane = new StackPane(rectangle, text);
             stackPane.setAlignment(Pos.BOTTOM_CENTER);
@@ -470,7 +441,7 @@ return gridPane;
 
 
 
-            Text text = new Text(student.getName() + " (" + student.getGrade() + ")");
+            Text text = new Text( ""+student.getGrade());
             text.setFill(Color.BLACK);
             StackPane stackPane = new StackPane(rectangle, text);
             stackPane.setAlignment(Pos.BOTTOM_CENTER);
@@ -481,7 +452,7 @@ return gridPane;
 
     private void startSorting(String sortingType) {
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(0.1), e -> {
+                new KeyFrame(Duration.seconds(0.01), e -> {
                     if (sortingActive && step < StdNum) {
                         if (sortingType.equals("Selection Sort")) {
                             selectionSortStep();
@@ -493,17 +464,30 @@ return gridPane;
                             countSortStep();
                         }
                         drawStudents();
-                        System.out.println("step" + step);
-                        System.out.println("count step" + countStep);
+//                        System.out.println("step" + step);
+//                        System.out.println("count step" + countStep);
                         step++;
                         countStep--;
 
                     }
                 })
         );
-        timeline.setCycleCount(StdNum);
+        timeline.setCycleCount(StdNum); //O(n)
         timeline.play();
-    }
+        timeline.setOnFinished(actionEvent -> {
+
+            endTime = System.currentTimeMillis();
+            executionTime = endTime - startTime;
+
+            if (sortingType.equals("Count Sort")) {
+                System.out.println("Execution time: " + executionTime + " milliseconds");
+            } else {
+                System.out.println("Execution time: " + executionTime + " milliseconds");
+            }
+        }) ;
+
+        }
+
 
     private void shuffleStudents() {
         // Shuffle students array
@@ -543,7 +527,8 @@ return gridPane;
 
     private void selectionSortStep() {
         int minIndex = step;
-        for (int i = step + 1; i < StdNum; i++) {
+        int i=0;
+        for (i = step + 1; i < StdNum; i++) {
             if (students[i].getGrade() < students[minIndex].getGrade()) {
                 minIndex = i;
             }
@@ -558,7 +543,7 @@ return gridPane;
         counter = visualizationStep+1;
         final int[] minIndex = {visualizationStep};
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1), e -> {
+                new KeyFrame(Duration.seconds(0.01), e -> {
 
                     if(counter<StdNum){
                         drawStudentsComparing(visualizationStep, counter);
@@ -592,6 +577,7 @@ return gridPane;
 
                 })
         );
+
         timeline.setCycleCount(StdNum+1);
         timeline.play();
     }
