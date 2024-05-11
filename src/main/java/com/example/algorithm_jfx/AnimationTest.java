@@ -16,6 +16,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+//////////////////////////////////////////This Class is for testing the animation of the sorting algorithms//////////////////////////////////////////
 public class AnimationTest extends Application {
 
     private static final int ARRAY_SIZE = 10;

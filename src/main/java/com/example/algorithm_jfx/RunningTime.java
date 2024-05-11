@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 
 import java.util.Random;
 
+///////////////////////////////This Class main purpose is to calculate the running time of the sorting algorithms//////////////////////////
 public class RunningTime extends Application {
     Student[] students;
     private static final int StdNum = 1000;
