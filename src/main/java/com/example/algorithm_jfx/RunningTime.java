@@ -28,9 +28,8 @@ public class RunningTime extends Application {
     ObservableList<String> sortingName;
     private ComboBox<String> sortingAlgorithmComboBox;
     private boolean sortingActive = false;
-    private long startTime;
-    private Scene scene1, scene2;
-    private ScrollBar scrollBar2;
+    private Scene scene1;
+
 
 
     public static void main(String[] args) {
@@ -39,7 +38,7 @@ public class RunningTime extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        sortingName = FXCollections.observableArrayList("selection", "bubble", "cycle", "count");
+        sortingName = FXCollections.observableArrayList("selection", "bubble", "count", "heap");
         students = new Student[StdNum];
         Random random = new Random();
         for (int i = 0; i < StdNum; i++) {
@@ -91,8 +90,10 @@ public class RunningTime extends Application {
                 countSort();
                 gridPane.getChildren().clear();
                 DrawGridPane(gridPane);
-            } else {
-                System.out.println("No sorting algorithm selected.");
+            } else if (selectedItem.equals("heap")) {
+                heapSort();
+                gridPane.getChildren().clear();
+                DrawGridPane(gridPane);
             }
         } else {
             System.out.println("No sorting algorithm selected.");
@@ -183,7 +184,7 @@ public class RunningTime extends Application {
 
         }
     public void selectionSort() {
-        startTime = System.nanoTime();
+       long startTime = System.nanoTime();
         for (int i = 0; i < StdNum - 1; i++) {
             // Find the index of the minimum grade from the subarray[i...StdNum]
             int minIndex = i;
@@ -202,7 +203,7 @@ public class RunningTime extends Application {
         System.out.println("Selection sort running time: " + (endTime - startTime) + " nanoseconds");
     }
     public void bubbleSort() {
-        startTime = System.nanoTime();
+       long startTime = System.nanoTime();
         for (int i = 0; i < StdNum - 1; i++) {
             for (int j = 0; j < StdNum - i - 1; j++) {
                 if (students[j].getGrade() > students[j + 1].getGrade()) {
@@ -217,7 +218,7 @@ public class RunningTime extends Application {
         System.out.println("Bubble sort running time: " + (endTime - startTime) + " nanoseconds");
     }
     public void countSort() {
-        startTime = System.nanoTime();
+       long  startTime = System.nanoTime();
         int maxGrade = 0;
         for (int i = 0; i < StdNum; i++) {
             if (students[i].getGrade() > maxGrade) {
@@ -251,6 +252,53 @@ public class RunningTime extends Application {
         }
         long endTime = System.nanoTime();
         System.out.println("Count sort running time: " + (endTime - startTime) + " nanoseconds");
+    }
+    public void heapSort() {
+        long startTime = System.nanoTime();
+        int n = StdNum;
+
+        // Build heap (rearrange array)
+        for (int i = n / 2 - 1; i >= 0; i--)
+            heapify(students, n, i);
+
+        // One by one extract an element from heap
+        for (int i = n - 1; i >= 0; i--) {
+            // Move current root to end
+            Student temp = students[0];
+            students[0] = students[i];
+            students[i] = temp;
+
+            // call max heapify on the reduced heap
+            heapify(students, i, 0);
+        }
+        long endTime = System.nanoTime();
+        System.out.println("Heap sort running time: " + (endTime - startTime) + " nanoseconds");
+
+    }
+
+    // To heapify a subtree rooted with node i which is an index in students[]. n is size of heap
+    void heapify(Student students[], int n, int i) {
+        int largest = i; // Initialize largest as root
+        int left = 2 * i + 1; // left = 2*i + 1
+        int right = 2 * i + 2; // right = 2*i + 2
+
+        // If left child is larger than root
+        if (left < n && students[left].getGrade() > students[largest].getGrade())
+            largest = left;
+
+        // If right child is larger than largest so far
+        if (right < n && students[right].getGrade() > students[largest].getGrade())
+            largest = right;
+
+        // If largest is not root
+        if (largest != i) {
+            Student swap = students[i];
+            students[i] = students[largest];
+            students[largest] = swap;
+
+            // Recursively heapify the affected sub-tree
+            heapify(students, n, largest);
+        }
     }
 
 

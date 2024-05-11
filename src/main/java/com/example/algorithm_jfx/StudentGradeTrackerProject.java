@@ -22,7 +22,7 @@ import java.util.Random;
 
 public class StudentGradeTrackerProject extends Application {
 
-    public static final int StdNum = 50;
+    public static final int StdNum = 100;
     static Student[] students;
     HBox[] hBoxes;
     ObservableList<String> sortingName;
@@ -36,7 +36,6 @@ public class StudentGradeTrackerProject extends Application {
     private int countStep = StdNum - 1;
     private int visualizationStep = 0;
     int counter;
-    int frameCounter;
     int[] inputArray = new int[StdNum];
     int[] countArray;
     int[] outputArray  = new int[StdNum];
@@ -50,6 +49,8 @@ public class StudentGradeTrackerProject extends Application {
     long executionTime;
 
  private static GridPane gridPane;
+    private int frameCounter = 0;
+
 
     public static void main(String[] args) {
         launch(args);
@@ -58,7 +59,7 @@ public class StudentGradeTrackerProject extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        sortingName = FXCollections.observableArrayList("selection", "bubble", "cycle", "count");
+        sortingName = FXCollections.observableArrayList("selection", "bubble", "count");
         students = new Student[StdNum];
         Random random =new Random();
         for (int i = 0; i < StdNum; i++) {
@@ -133,8 +134,9 @@ public class StudentGradeTrackerProject extends Application {
 
 
                     Button b1=new Button("back");
-                    Button b2=new Button("Selection Visualization");
+                    Button b2=new Button("selectionVisualization");
                     HBox hVis=new HBox(b1,b2);
+                    hVis.setSpacing(10);
                     b1.setStyle("-fx-background-color: #D3D3D3;-fx-text-fill: Black;");
 
                     GridPane g1=new GridPane();
@@ -179,10 +181,9 @@ public class StudentGradeTrackerProject extends Application {
                     startSorting("Bubble Sort");
 
                     Button b1=new Button("back");
-                    Button b2=new Button("Bubble Visualization");
+                    Button b2=new Button("BubbleVisualization");
                     HBox hVis=new HBox(b1,b2);
-                    b1.setStyle("-fx-background-color: #D3D3D3;-fx-text-fill: Black;");
-
+                    hVis.setSpacing(10);
                     GridPane g1=new GridPane();
                     g1.getChildren().addAll(hbox);
                     g1.translateXProperty().bind(scrollBar2.valueProperty().negate());
@@ -214,39 +215,7 @@ public class StudentGradeTrackerProject extends Application {
                         drawStudents();
                         bubbleSortStepVisualization();
                     });
-                }
-                else if (selectedItem.equals("cycle")) {
-                    sortingActive = true;
-                    startSorting("Cycle Sort");
-                    Button b1=new Button("back");
-                    GridPane g1=new GridPane();
-                    g1.getChildren().addAll(hbox);
-                    g1.translateXProperty().bind(scrollBar2.valueProperty().negate());
-                    g1.setAlignment(Pos.BOTTOM_CENTER);
-                    BorderPane borderPane=new BorderPane();
-                    borderPane.setCenter(g1);
-                    borderPane.setTop(b1);
-                    borderPane.setBottom(scrollBar2);
-
-                    g1.setOnScroll(event2 -> {
-                        double deltaX = event2.getDeltaX()*0.5;
-                        scrollBar2.setValue(scrollBar2.getValue() - deltaX);
-                    });
-
-                    primaryStage.setScene(scene2=new Scene(borderPane,1500,400));
-                    double centerX = (1920 - primaryStage.getWidth()) / 2;
-                    double centerY = (1080 - primaryStage.getHeight()) / 2;
-                    primaryStage.setX(centerX);
-                    primaryStage.setY(centerY);
-                    primaryStage.show();
-                    b1.setOnAction(actionEvent -> {
-                        primaryStage.setScene(scene1);
-                        primaryStage.setX(centerX+500);
-                        primaryStage.setY(centerY-250);
-                        DrawGridPane(gridPane);
-                    });
-                }
-                else if (selectedItem.equals("count")) {
+                } else if (selectedItem.equals("count")) {
                     startTime = System.currentTimeMillis();
                     sortingActive = true;
                     startSorting("Count Sort");
@@ -445,7 +414,7 @@ return gridPane;
 
             Rectangle rectangle;
             //Coloring
-            if(i != firstInd){
+            if(i != firstInd & i != secondInd){
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.LIGHTGREY);
             } else {
                 rectangle = new Rectangle(RECTANGLE_WIDTH, 200 * student.getGrade() / MAX_GRADE, Color.GREEN);
@@ -591,62 +560,6 @@ return gridPane;
         );
 
         timeline.setCycleCount(StdNum+1);
-        timeline.play();
-    }
-
-    private void bubbleSortStepVisualization() {
-        System.out.println("bubble sort visualization");
-
-        counter = visualizationStep - 1;
-        frameCounter = 0;
-        final boolean[] swapping = {false};
-        boolean[] swapped = {false};
-
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(.25), e -> {
-                    if(frameCounter == 0){
-                        counter++;
-                    }
-                    System.out.println("counter after adding "+counter);
-
-                    if(counter < StdNum & frameCounter == 0){
-                        drawStudentsComparing(counter + 1, counter);
-                    }
-
-                    if(frameCounter != 0){
-
-                        if(frameCounter == 1){
-                            drawStudentsComparingJustBeforeSwapping(counter + 1, counter);
-                        }
-
-                        if(frameCounter == 2) {
-                            Student temp = students[counter];
-                            students[counter] = students[counter + 1];
-                            students[counter + 1] = temp;
-                            drawStudentsJustAfterSwapping(counter + 1, counter);
-                        }
-                    }
-
-                    System.out.println("Frame counter = "+frameCounter);
-
-                    for(int i = 0; i < 1; i++){
-                        if ((students[counter].getGrade() > students[counter + 1].getGrade()) & frameCounter == 0) {
-                            frameCounter++;
-                            break;
-                        }
-
-                        if(frameCounter == 1){
-                            frameCounter++;
-                            break;
-                        }
-
-                        if(frameCounter == 2){
-                            frameCounter = 0;
-                        }
-                    }
-                })
-        );
-        timeline.setCycleCount(StdNum * 3);
         timeline.play();
     }
 
@@ -823,7 +736,63 @@ return gridPane;
         students[sortedIndex] = temp;
 
     }
+    private void bubbleSortStepVisualization() {
+        System.out.println("bubble sort visualization");
 
+        counter = visualizationStep - 1;
+        frameCounter = 0;
+        final boolean[] swapping = {false};
+        boolean[] swapped = {false};
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(.5), e -> {
+                    if(frameCounter == 0){
+                        counter++;
+                    }
+                    System.out.println("counter after adding "+counter);
+
+                    if(counter < StdNum & frameCounter == 0){
+                        drawStudentsComparing(counter + 1, counter);
+                    }
+
+                    if(frameCounter != 0){
+
+                        if(frameCounter == 1){
+                            drawStudentsComparingJustBeforeSwapping(counter + 1, counter);
+                        }
+
+                        if(frameCounter == 2) {
+                            Student temp = students[counter];
+                            students[counter] = students[counter + 1];
+                            students[counter + 1] = temp;
+                            drawStudentsJustAfterSwapping(counter + 1, counter);
+                        }
+                    }
+
+                    System.out.println("Frame counter = "+frameCounter);
+
+                    for(int i = 0; i < 1; i++){
+                        if ((students[counter].getGrade() > students[counter + 1].getGrade()) & frameCounter == 0) {
+                            frameCounter++;
+                            break;
+                        }
+
+                        if(frameCounter == 1){
+                            frameCounter++;
+                            break;
+                        }
+
+                        if(frameCounter == 2){
+                            frameCounter = 0;
+                        }
+                    }
+                })
+        );
+        timeline.setCycleCount(StdNum * 3);
+        timeline.play();
+    }
 }
+
+
 
 
